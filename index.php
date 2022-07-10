@@ -1,13 +1,16 @@
 <?php
+	include "dbconnect.php" 
+?>
+<?php
 // define variables and set to empty values
 $searchbookErr = $searchbook = "";
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-	if(empty($_POST["searchbook"])){
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+	if(empty($_GET["searchbook"])){
 		$searchbookErr = "search is required";
 	}
 	else
-  $searchbook = test_input($_POST["searchbook"]);
+  $searchbook = test_input($_GET["searchbook"]);
 }
 
 function test_input($data) {
@@ -17,9 +20,7 @@ function test_input($data) {
   return $data;
 }
 ?>
-<?php
-	include "dbconnect.php" 
-?>
+
 <html>
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -96,7 +97,7 @@ function test_input($data) {
 		<img src = "images/Introlib.jpeg">
 	</div>
 	<div class = "searchbar">
-		<form method="post" action="#" >
+		<form method="GET" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" >
 			<input type = "search" placeholder ="Search Book" autocomplete="on" name="searchbook"> 
 			<button type="submit"><i class="fa fa-search"></i></button>
 		</form>
@@ -113,23 +114,43 @@ function test_input($data) {
 <?php 
 
 // Perform query
-if ($result = $conn -> query("SELECT * FROM book")) {
-	for($i = 0;$i < ($result -> num_rows);$i++){
-		$row = mysqli_fetch_assoc($result);
+if ($searchbook == ""){
+	$query = 'SELECT * FROM getinfo_availablebook()';
+	$result = pg_query($Conn,$query);
+	if (!$result) {
+    	echo "An error occurred.\n";
+    	exit;
+	}
+	
+}
+else{
+	$query = 'SELECT * FROM find_availablebookbyname(\''.$searchbook.'\')';
+	$result = pg_query($Conn,$query);
+	if (!$result) {
+    	echo "An error occurred.\n";
+    	exit;
+	}
+}
+
+while ($row = pg_fetch_assoc($result)) {
 ?>
  	<tr>
- 		<td><?php  echo $row["book_name"]; ?></td>
+
+ 		<td><?php  echo $row["name"]; ?></td>
  		<td><?php  echo $row["type"]; ?></td>
  		<td><?php  echo $row["author"]; ?></td>
  		<td><?php  echo $row["available"]; ?></td>
  		<td><button>Muon</button></td>
  	</tr>
 <?php
-}}
+}
 ?>
 </table>
+<?php 
+if(!pg_close($Conn)) {
+	print "Failed to close connection to " . pg_host($pgsql_conn) . ": " .
+   pg_last_error($Conn) . "<br/>\n";
+}
+?>
 </body>
 <script src="app.js"></script>
-<?php
- $conn->close();
-?>

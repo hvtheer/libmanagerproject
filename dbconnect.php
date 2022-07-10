@@ -1,15 +1,8 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "root";
-$dbname = "libmaneger";
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-  die("Connection failed: " . $conn->connect_error);
+$Conn = pg_connect("host=localhost port=5432 dbname=libmaneger user=postgres password=125217");
+if (!$Conn) {
+    echo "An error occurred.\n";
+    exit;
 }
-
+// Query data
 ?>

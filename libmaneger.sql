@@ -121,37 +121,37 @@ WHERE status = TRUE AND nhanvien.username = usernameinput;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION getinfo_availablebook() RETURNS TABLE(name varchar(255),type varchar(255), author varchar(255))
+CREATE OR REPLACE FUNCTION getinfo_availablebook() RETURNS TABLE(name varchar(255),type varchar(255), author varchar(255),available INTEGER)
 AS $$
 BEGIN
-RETURN QUERY SELECT book.book_name , book.type, book.author 
+RETURN QUERY SELECT book.book_name , book.type, book.author, book.available 
 FROM book
 WHERE book.available > 0;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION find_availablebookByname(input_name varchar(255)) RETURNS TABLE(name varchar(255),type varchar(255), author varchar(255))
+CREATE OR REPLACE FUNCTION find_availablebookByname(input_name varchar(255)) RETURNS TABLE(name varchar(255),type varchar(255), author varchar(255),available INTEGER)
 AS $$
 BEGIN
-RETURN QUERY SELECT book.book_name , book.type, book.author
+RETURN QUERY SELECT book.book_name , book.type, book.author, book.available
 FROM book
 WHERE book.available > 0 AND (SELECT POSITION(input_name IN book.book_name) > 0);
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION find_availablebookBytype(input_type varchar(255)) RETURNS TABLE(name varchar(255),type varchar(255), author varchar(255))
+CREATE OR REPLACE FUNCTION find_availablebookBytype(input_type varchar(255)) RETURNS TABLE(name varchar(255),type varchar(255), author varchar(255),available INTEGER)
 AS $$
 BEGIN
-RETURN QUERY SELECT book.book_name , book.type, book.author
+RETURN QUERY SELECT book.book_name , book.type, book.author, book.available
 FROM book
 WHERE book.available > 0 AND (SELECT POSITION(input_type IN book.type) > 0);
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION find_availablebookByauthor(input_author varchar(255)) RETURNS TABLE(name varchar(255),type varchar(255), author varchar(255))
+CREATE OR REPLACE FUNCTION find_availablebookByauthor(input_author varchar(255)) RETURNS TABLE(name varchar(255),type varchar(255), author varchar(255),available INTEGER)
 AS $$
 BEGIN
-RETURN QUERY SELECT book.book_name , book.type, book.author
+RETURN QUERY SELECT book.book_name , book.type, book.author, book.available
 FROM book
 WHERE book.available > 0 AND (SELECT POSITION(input_author IN book.author) > 0);
 END;
