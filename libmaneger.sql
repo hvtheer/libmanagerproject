@@ -1,7 +1,7 @@
 create database libmaneger;
-\c libmaneger;
+use libmaneger;
 CREATE TABLE IF NOT EXISTS user_info(
-    user_id SERIAL NOT NULL,
+    userinfo_id SERIAL NOT NULL,
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
     username VARCHAR(255) UNIQUE NOT NULL,
@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS user_info(
     address VARCHAR(255) NOT NULL,
     phone VARCHAR(255)UNIQUE NOT NULL,
     status BOOLEAN NOT NULL DEFAULT TRUE,
-    PRIMARY KEY("user_id")
+    PRIMARY KEY("userinfo_id")
 );
 CREATE TABLE IF NOT EXISTS nhanvien(
     "nhanvien_id" SERIAL NOT NULL,
@@ -36,11 +36,11 @@ CREATE TABLE IF NOT EXISTS "book"(
 );
 CREATE TABLE IF NOT EXISTS transaction(
     "transaction_id" SERIAL NOT NULL,
-    "user_id" INTEGER NOT NULL,
+    "userinfo_id" INTEGER NOT NULL,
     "book_id" INTEGER NOT NULL,
     "status" BOOLEAN NOT NULL DEFAULT FALSE,
     PRIMARY KEY("transaction_id"),
-    FOREIGN KEY("user_id") REFERENCES "user_info"("user_id"),
+    FOREIGN KEY("userinfo_id") REFERENCES "user_info"("userinfo_id"),
     FOREIGN KEY("book_id") REFERENCES "book"("book_id")
 );
 
@@ -161,7 +161,7 @@ CREATE OR REPLACE FUNCTION find_transactionbyId(itransaction_id INTEGER) RETURNS
 AS $$
 BEGIN
 RETURN QUERY SELECT user_info.first_name || ' ' || user_info.last_name as name, book.book_name, transaction_info.borrowDate, transaction_info.dueDate 
-FROM ((transaction inner join transaction_info on transaction_info.transaction_id = transaction.transaction_id) inner join user_info on transaction.user_id = user_info.user_id) inner join book on book.book_id = transaction.book_id 
+FROM ((transaction inner join transaction_info on transaction_info.transaction_id = transaction.transaction_id) inner join user_info on transaction.userinfo_id = user_info.userinfo_id) inner join book on book.book_id = transaction.book_id 
 WHERE user_info.status = TRUE AND transaction.status = FALSE AND itransaction_id = transaction.transaction_id; 
 END;
 $$ LANGUAGE plpgsql;
@@ -170,7 +170,7 @@ CREATE OR REPLACE FUNCTION findall_actransaction() RETURNS TABLE(transaction_id 
 AS $$
 BEGIN
 RETURN QUERY SELECT transaction.transaction_id, user_info.first_name || ' ' || user_info.last_name as name, book.book_name, transaction_info.borrowDate, transaction_info.dueDate 
-FROM ((transaction inner join transaction_info on transaction_info.transaction_id = transaction.transaction_id) inner join user_info on transaction.user_id = user_info.user_id) inner join book on book.book_id = transaction.book_id 
+FROM ((transaction inner join transaction_info on transaction_info.transaction_id = transaction.transaction_id) inner join user_info on transaction.userinfo_id = user_info.userinfo_id) inner join book on book.book_id = transaction.book_id 
 WHERE user_info.status = TRUE AND transaction.status = FALSE ;
 END;
 $$ LANGUAGE plpgsql;
@@ -180,7 +180,7 @@ CREATE OR REPLACE FUNCTION add_transactions() RETURNS TRIGGER
 AS $$
 BEGIN
         IF 
-            (SELECT available from book where book.book_id = NEW.book_id) > 0 AND (select status from user_info where NEW.user_id = user_info.user_id) = TRUE
+            (SELECT available from book where book.book_id = NEW.book_id) > 0 AND (select status from user_info where NEW.userinfo_id = user_info.userinfo_id) = TRUE
         THEN 
            UPDATE book SET available = available - 1 WHERE book.book_id = NEW.book_id;
            
@@ -201,7 +201,7 @@ CREATE OR REPLACE FUNCTION add_transactionsa() RETURNS TRIGGER
 AS $$
 BEGIN   
         IF 
-            (SELECT available from book where book.book_id = NEW.book_id) > 0 AND (select status from user_info where NEW.user_id = user_info.user_id) = TRUE
+            (SELECT available from book where book.book_id = NEW.book_id) > 0 AND (select status from user_info where NEW.userinfo_id = user_info.userinfo_id) = TRUE
         THEN 
            INSERT INTO transaction_info(transaction_id) values (NEW.transaction_id);
            RETURN NEW;    
@@ -219,7 +219,7 @@ BEGIN
         IF (NEW.returndate - (select duedate from transaction_info WHERE NEW.transaction_id = transaction_info.transaction_id )) > 0 
         THEN 
         NEW.fines =  (NEW.returndate - (select duedate from transaction_info WHERE NEW.transaction_id = transaction_info.transaction_id ))*3000;
-        UPDATE user_info SET status = FALSE WHERE user_info.user_id =  (select user_id from transaction where NEW.transaction_id = transaction.transaction_id );
+        UPDATE user_info SET status = FALSE WHERE user_info.userinfo_id =  (select userinfo_id from transaction where NEW.transaction_id = transaction.transaction_id );
         END IF;
 
         UPDATE transaction SET status = TRUE WHERE transaction.transaction_id = NEW.transaction_id;
@@ -235,9 +235,9 @@ EXECUTE PROCEDURE return_book();
 
 
 -- test of insert a transaction
--- INSERT INTO transaction(user_id,book_id) values (1,1);
--- INSERT INTO transaction(user_id,book_id) values (2,3);
--- INSERT INTO transaction(user_id,book_id) values (2,2);
+-- INSERT INTO transaction(userinfo_id,book_id) values (1,1);
+-- INSERT INTO transaction(userinfo_id,book_id) values (2,3);
+-- INSERT INTO transaction(userinfo_id,book_id) values (2,2);
 -- test returnbooks 
 -- INSERT INTO returnbooks(transaction_id,nhanvien_id,fines) values (1,1,0);
 -- check fines 

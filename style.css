@@ -6,6 +6,88 @@
 body{
     background-color: #C3EAF4;
 }
+.canvassignin{
+    border: none;
+    top: 0;
+    position: fixed;
+    height: 100vh;
+    width: 150vw;
+    background:  rgba(0,0,0,0.6);
+    z-index: 2;
+}
+.signinbox{
+    width: 360px;
+    height: 210px;
+    border-radius: 15px;
+    overflow: hidden;
+    align-items: center;
+    align-content: center;
+    background: lightgoldenrodyellow;
+    position: relative;
+    animation: show 0.8s linear;
+    top :15%;
+    left: 25%;
+}
+.signinbox button{
+    position: sticky;
+    border: none;
+    margin-left: 80px;
+    width: 149px;
+    height: 30px;
+    border-radius: 5px;
+    opacity: 1;
+    background: #BFAEE3;
+    transition: 0.2s;
+}
+.signinbox li{
+    list-style-type: none;
+}
+.signinbox .info{
+    margin-left: 22px;
+}
+.signinbox p{
+    margin-left: 10px;
+}
+.canvas{
+    border: none;
+    top: 0;
+    position: fixed;
+    height: 100vh;
+    width: 150vw;
+    background:  rgba(0,0,0,0.6);
+    z-index: 2;
+}
+.box{
+    width: 750px;
+    height: 600px;
+    border-radius: 15px;
+    overflow: hidden;
+    align-items: center;
+    align-content: center;
+    background: lightgoldenrodyellow;
+    position: relative;
+    animation: show 0.8s linear;
+    top :5%;
+    left: 15%;
+}
+.box button{
+    position: sticky;
+    border: none;
+    margin-left: 80px;
+    width: 149px;
+    height: 30px;
+    border-radius: 5px;
+    opacity: 1;
+    background: #BFAEE3;
+    transition: 0.2s;
+}
+.box .info{
+    margin-left: 120px;
+    display: inline-block;
+}
+.box p{
+    margin-left: 10px;
+}
 .optional{
     width: 1265px;
     height: 60px;
@@ -33,10 +115,9 @@ body{
    transform: scale(1.1);
    opacity: 1;
 }
-.optional a{
+.optional li{
+    color: #B6DDDA;
     border-color: lightcoral;
-    color: lightcyan;
-    text-decoration: none;
 }
 .searchbar{
     width: auto;
@@ -49,11 +130,11 @@ body{
     margin-left: 440px;
     margin-top: 20px;
 }
-.searchbar input{
+input{
     background-color: rgb(219, 202, 180);
     position: inherit;
     text-indent: 10px;
-    color:silver;
+    color:darkred;
     width: 320px;
     height: 30px;
     font-size: 10pt;
@@ -64,7 +145,7 @@ body{
     overflow: hidden;
     opacity: 0.5;
 }
-button{
+.searchbar button{
     position: sticky;
     border: none;
     margin-left: -3.8px;
@@ -88,22 +169,41 @@ i{
     padding: 8px;
 }
 .tableofbook{
-    margin-left: 450px;
+    padding: 20px;
+    width: 1020px;
+    height: auto;
+    margin-left: 90px;
     position: relative;
     padding: 5px;
 }
-.tableofbook tr{
-    outline: lightcoral;
-    padding: 5px;
+.tableofbook table {
+    border-collapse: separate;
+    width: 100%;
+  }
+  
+.tableofbook th,.tableofbook td {
+    text-align: left;
+    padding: 8px;
 }
+.tableofbook tr:nth-child(even) {background-color: #f2f2f2;}
 .imageintro img{
     padding: 15px;
     margin-top: 5px;
     width: 1260px;
     height: 250px;
 }
-
+.hide{
+    display: none;
+}
 ::selection{
     background: yellow;
     color: red;
+}
+@keyframes show{
+    from{
+        top :-400px;
+    }
+    to{
+        top :16%;
+    }
 }
