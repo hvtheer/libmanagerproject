@@ -1,5 +1,5 @@
 create database libmaneger;
-use libmaneger;
+\c libmaneger;
 CREATE TABLE IF NOT EXISTS user_info(
     userinfo_id SERIAL NOT NULL,
     first_name VARCHAR(255) NOT NULL,
@@ -10,55 +10,55 @@ CREATE TABLE IF NOT EXISTS user_info(
     address VARCHAR(255) NOT NULL,
     phone VARCHAR(255)UNIQUE NOT NULL,
     status BOOLEAN NOT NULL DEFAULT TRUE,
-    PRIMARY KEY("userinfo_id")
+    PRIMARY KEY(userinfo_id)
 );
 CREATE TABLE IF NOT EXISTS nhanvien(
-    "nhanvien_id" SERIAL NOT NULL,
-    "first_name" VARCHAR(255) NOT NULL,
-    "last_name" VARCHAR(255) NOT NULL,
-    "username" VARCHAR(255) UNIQUE NOT NULL ,
-    "password" VARCHAR(255) NOT NULL,
-    "email" VARCHAR(255)UNIQUE NOT NULL,
-    "address" VARCHAR(255)NOT NULL,
-    "phone" VARCHAR(255)UNIQUE NOT NULL,
-    "status" BOOLEAN NOT NULL DEFAULT TRUE,
-    PRIMARY KEY("nhanvien_id")
+    nhanvien_id SERIAL NOT NULL,
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    username VARCHAR(255) UNIQUE NOT NULL ,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(255)UNIQUE NOT NULL,
+    address VARCHAR(255)NOT NULL,
+    phone VARCHAR(255)UNIQUE NOT NULL,
+    status BOOLEAN NOT NULL DEFAULT TRUE,
+    PRIMARY KEY(nhanvien_id)
 );
 
-CREATE TABLE IF NOT EXISTS "book"(
-    "book_id" SERIAL NOT NULL,
-    "book_name" VARCHAR(255)UNIQUE NOT NULL,
-    "type" VARCHAR(255) NOT NULL,
-    "author" VARCHAR(255) NOT NULL,
-    "available" INTEGER NOT NULL,
-    "description" TEXT NULL,
-    PRIMARY KEY("book_id")
+CREATE TABLE IF NOT EXISTS book(
+    book_id SERIAL NOT NULL,
+    book_name VARCHAR(255)UNIQUE NOT NULL,
+    type VARCHAR(255) NOT NULL,
+    author VARCHAR(255) NOT NULL,
+    available INTEGER NOT NULL,
+    description TEXT NULL,
+    PRIMARY KEY(book_id)
 );
 CREATE TABLE IF NOT EXISTS transaction(
-    "transaction_id" SERIAL NOT NULL,
-    "userinfo_id" INTEGER NOT NULL,
-    "book_id" INTEGER NOT NULL,
-    "status" BOOLEAN NOT NULL DEFAULT FALSE,
-    PRIMARY KEY("transaction_id"),
-    FOREIGN KEY("userinfo_id") REFERENCES "user_info"("userinfo_id"),
-    FOREIGN KEY("book_id") REFERENCES "book"("book_id")
+    transaction_id SERIAL NOT NULL,
+    userinfo_id INTEGER NOT NULL,
+    book_id INTEGER NOT NULL,
+    status BOOLEAN NOT NULL DEFAULT FALSE,
+    PRIMARY KEY(transaction_id),
+    FOREIGN KEY(userinfo_id) REFERENCES user_info(userinfo_id),
+    FOREIGN KEY(book_id) REFERENCES book(book_id)
 );
 
 CREATE TABLE IF NOT EXISTS transaction_info(
-    "transaction_id" INTEGER NOT NULL,
-    "borrowdate" DATE NOT NULL DEFAULT CURRENT_DATE,
-    "duedate" DATE NOT NULL DEFAULT CURRENT_DATE + 7,
-    PRIMARY KEY("transaction_id"),
-    FOREIGN KEY("transaction_id") REFERENCES "transaction"("transaction_id")
+    transaction_id INTEGER NOT NULL,
+    borrowdate DATE NOT NULL DEFAULT CURRENT_DATE,
+    duedate DATE NOT NULL DEFAULT CURRENT_DATE + 7,
+    PRIMARY KEY(transaction_id),
+    FOREIGN KEY(transaction_id) REFERENCES transaction(transaction_id)
 );
 CREATE TABLE IF NOT EXISTS returnbooks(
-    "transaction_id" INTEGER NOT NULL,
-    "nhanvien_id" INTEGER NOT NULL,
-    "returndate" DATE NOT NULL DEFAULT CURRENT_DATE,
-    "fines" INTEGER NOT NULL DEFAULT 0,
-    PRIMARY KEY("transaction_id"),
-    FOREIGN KEY("transaction_id") REFERENCES "transaction"("transaction_id"),
-    FOREIGN KEY("nhanvien_id") REFERENCES "nhanvien"("nhanvien_id")
+    transaction_id INTEGER NOT NULL,
+    nhanvien_id INTEGER NOT NULL,
+    returndate DATE NOT NULL DEFAULT CURRENT_DATE,
+    fines INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY(transaction_id),
+    FOREIGN KEY(transaction_id) REFERENCES transaction(transaction_id),
+    FOREIGN KEY(nhanvien_id) REFERENCES nhanvien(nhanvien_id)
 );
 \encoding "utf-8";
 INSERT INTO user_info(first_name,last_name,username,password,email,address,phone) values('Thanh','Duong','katanashi03','okebae123','katanashi03@gmail.com','78 197 Hoàng Mai','0329980119');
@@ -239,6 +239,6 @@ EXECUTE PROCEDURE return_book();
 -- INSERT INTO transaction(userinfo_id,book_id) values (2,3);
 -- INSERT INTO transaction(userinfo_id,book_id) values (2,2);
 -- test returnbooks 
--- INSERT INTO returnbooks(transaction_id,nhanvien_id,fines) values (1,1,0);
+-- INSERT INTO returnbooks(transaction_id,nhanvien_id) values (1,1);
 -- check fines 
 -- INSERT INTO returnbooks(transaction_id,nhanvien_id,returndate) values (1,1,'2022-08-06');
