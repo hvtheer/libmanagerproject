@@ -1,7 +1,14 @@
 <?php 
     $usernamesignin = $passwordsignin = $usernamesigninErr = $typeaccount =  "";
-    $signinStatus = 0;
-    if ($_SERVER["REQUEST_METHOD"] == "POST"){
+    
+    if($signupstatus == 1){
+        $signinStatus = 1;
+        $usernamesignin = $username;
+        $typeaccount = "user";
+        $passwordsignin = $password;
+        $signupstatus = 0;
+    }
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && $signupstatus == 0 && $signinStatus = 0){
     if(empty($_POST["signinusername"])){
         $usernamesigninErr = "username must not empty.";
     }
@@ -9,7 +16,6 @@
         $usernamesignin = test_input($_POST["signinusername"]);
         $passwordsignin = test_input($_POST["signinpassword"]);
         if($_POST["typeaccount"] == "user"){
-            $signinStatus = 0;
 	        $result = pg_query($Conn,'SELECT * FROM getinfo_acuser(\''.$usernamesignin.'\')');
 	        if (!$result) {
     	        echo "An error occurred.\n";
@@ -18,6 +24,9 @@
             else{
                 if($row = pg_fetch_assoc($result)){
                     if($row["password"] == $passwordsignin){
+                        $accountname = $usernamesignin;
+                        $accounttype = $_POST["typeaccount"];
+                        $accountpassword = $passwordsignin;
                         $signinStatus = 1;
                     }
                 }
@@ -38,7 +47,6 @@
             }
         }
         else if($_POST["typeaccount"] == "nhanvien"){
-            $signinStatus = 0;
             $result = pg_query($Conn,'SELECT * FROM getinfo_nhanvien(\''.$usernamesignin.'\')');
 	        if (!$result) {
     	        echo "An error occurred.\n";
@@ -48,12 +56,16 @@
                 if($row = pg_fetch_assoc($result)){
                     if($row["password"] == $passwordsignin){
                         $signinStatus = 1;
+                        $accountname = $usernamesignin;
+                        $accounttype = $_POST["typeaccount"];
+                        $accountpassword = $passwordsignin;
                     }
 
                 }
                 if($signinStatus){
 ?>
                 <script>
+                   
                     alert('login nhanvien account suscess!');
                 </script>
 <?php                
@@ -93,7 +105,7 @@
                 <input type="radio" id="nhanvienpick" name="typeaccount" value="nhanvien" required="required">
                 <label for="nhanvien">NhanVien</label>
 				<div class="info">
-					<button type="submit">Sign Up</button>
+					<button type="submit">Sign In</button>
 				</div>
 			</form>
 		</div>

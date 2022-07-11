@@ -1,4 +1,5 @@
 <?php
+
 $last_name = $last_nameErr = $first_name = $first_nameErr = $username = $usernameErr = $password = $passwordErr = $re_password = $re_passwordErr = $email = $emailErr = $numberphone = $numberErr = $address = $addressErr ="";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($_POST["last_name"])) {
@@ -6,9 +7,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
       $last_name = test_input($_POST["last_name"]);
       // check if name only contains letters and whitespace
-      if (!preg_match("/^[a-zA-Z-' ]*$/",$last_name)) {
-        $last_nameErr = "Only letters and white space allowed";
-      }
     }
 
     if (empty($_POST["first_name"])) {
@@ -16,9 +14,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       } else {
         $first_name = test_input($_POST["first_name"]);
         // check if name only contains letters and whitespace
-        if (!preg_match("/^[a-zA-Z-' ]*$/",$first_name)) {
-          $first_nameErr = "Only letters and white space allowed";
-        }
       }
     if (empty($_POST["username"])) {
         $usernameErr = "Username is required";
@@ -29,18 +24,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($_POST["password"])) {
         $passwordErr = "Password is required";
     }  
-   
     else{
-        if($_POST["password"] != $_POST["re_password"]){
-            $re_passwordErr = "Password not equal repassword";
-        }
-        else {
-            $password = test_input($_POST["password"]);
-            $re_password = test_input($POST["re_password"]);
-        }
+      $password = test_input($_POST["password"]); 
     }
-    if (empty($_POST["phone"])) {
-        $emailErr = "numberphone is required";
+    if (empty($_POST["re_password"])) {
+      $passwordErr = "re_Password is required";
+    }  
+    else{
+      $re_password = test_input($_POST["re_password"]);
+      if($password != $re_password){
+        $re_passwordErr = "Password not equal repassword";
+      }    
+    }
+       if (empty($_POST["numberphone"])) {
+        $numberErr = "numberphone is required";
       }
       else {
         $numberphone = test_input($_POST["numberphone"]);
@@ -54,9 +51,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       } else {
         $address = test_input($_POST["address"]);
         // check if name only contains letters and whitespace
-        if (!preg_match("/^[a-zA-Z0-9-' ]*$/",$address)) {
-          $addressErr = "Only letters and number and white space allowed";
-        }
       }
 
     if (empty($_POST["email"])) {
@@ -68,6 +62,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $emailErr = "Invalid email format";
       }
+    }
+    if($last_nameErr == "" && $first_nameErr == "" && $usernameErr == "" && $emailErr == "" && $addressErr == "" && $passwordErr == ""&& $usernameErr == "" && $re_passwordErr == ""&& $numberErr == ""){
+      $result = pg_prepare($Conn, "my_insertuser", 'INSERT INTO user_info(first_name,last_name,username,password,email,address,phone) values($1,$2,$3,$4,$5,$6,$7)');
+      if($query = pg_execute($Conn,"my_insertuser",array($first_name,$last_name,$username,$password,$email,$address,$numberphone))){
+        $signupstatus = 1;
+?>
+                <script>
+                  alert('Created User Success!');
+                </script>
+<?php
+      }
+    else {
+?>
+                <script>
+                  alert('Created User faile!');
+                </script>
+<?php
+          }
+    }
+    else {
+      ?>
+              <script>
+                  alert('you have some warning in your information');
+                </script>
+<?php
     }
 }
 ?>

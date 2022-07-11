@@ -1,5 +1,9 @@
 <?php include "disconn_andconn/dbconnect.php" ?>
 <?php include "test.php" ?>
+<?php
+	$signupstatus = 0;
+	$signinStatus = 0;
+?>
 <html>
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,9 +14,11 @@
 	<title>libmaneger</title>
 </head>
 <body>
+	
 	<?php include "layout/signin.php" ?>
 	<?php include "layout/signup.php" ?>
 	<?php include "layout/header.php" ?>
+	
 	<div class="imageintro">
 		<img src = "images/Introlib.jpeg">
 	</div>
