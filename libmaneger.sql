@@ -83,6 +83,20 @@ values('Tội ác và trừng phạt','Psychology','Dostoevsky',8,'Đây là cu�
 INSERT INTO book(book_name,type,author,available,description) 
 values('Nhà giả kim','Psychology','Paulo Coelho',18,'Nhà giả kim như là đang tự thuật trò chuyện với chính bản thân mình. Sách đã chỉ ra được những thứ đơn giản mà sâu sắc nhất trong đời, khi đọc sách mới có thể ngộ ra được. Bởi rất ít ai có thể tự mình nhận ra được điều đó. Trong tác phẩm đem đến cho độc giả sự lạc quan, những điều mơ ước mà con người đôi khi cũng chỉ biết mơ và không dám thực hiện. Quả thật nhà giả kim đã được biết đến trên khắp các nước trên thế giới. Đặc biệt còn được hầu hết các độc giả ở mọi lứa tuổi yêu thích và lựa chọn.');
 
+INSERT INTO book(book_name,type,author,available,description) 
+values('Mỗi lần vấp ngã là một lần Trưởng Thành','Psychology','Liêu Trí Phong',7,'Người ta vẫn thường hay nói mỗi lần vấp ngã là một lần đau và sau mỗi cú ngã ấy, chúng ta sẽ trở nên mạnh mẽ và trưởng thành hơn bao giờ hết. Cuộc sống đôi khi cũng có những ngày như thế đó. Thế nhưng, khi sự vấp ngã đã trở thành thói quen với một thân mình chằng chịt vết trầy xước, đó chính là khi tâm hồn dần dần hình thành sự vô cảm và chai sạm trước những nỗi đau.');
+
+INSERT INTO book(book_name,type,author,available,description) 
+values('Tuổi Trẻ Đáng Giá Bao Nhiêu?','Psychology','Rosie Nguyễn',7,'Bạn có chết mòn nơi xó tường với những ước mơ dang dở, đó không phải là việc của họ. Suy cho cùng, quyết định là ở bạn. Muốn có điều gì hay không là tùy bạn. Nên hãy làm những điều bạn thích. Hãy đi theo tiếng nói trái tim. Hãy sống theo cách bạn cho là mình nên sống.');
+
+INSERT INTO book(book_name,type,author,available,description) 
+values('Đời thay đổi khi chúng ta thay đổi','Psychology','Andrew Matthews',17,'“Đời thay đổi khi chúng ta thay đổi” (Being A Happy Teenager) đem lại cho độc giả những tình huống vô cùng thực tế, thậm chí là các câu chuyện vừa “nhỏ nhặt” lại vừa “quan trọng” với cách ứng xử khôn ngoan, thú vị và hài hước… Đồng thời, độc giả như bắt gặp chính mình trong đó, có những cạnh tranh, thất bại, và có những tình huống giao tiếp vừa chân thật lại vừa bổ ích.');
+
+INSERT INTO book(book_name,type,author,available,description) 
+values('Dạy Con Làm Giàu','Psychology','Robert Kiyosaki',17,'Cuốn sách Dạy Con Làm Giàu nói về cách làm sinh ra đồng tiền và quan điểm rất hay về đồng tiền., khơi dậy khả năng kiếm tiền của mỗi cá nhân.
+Hai quan điểm khác nhau đó là: Tham tiền là một tội ác, còn người kia lại bảo Nghèo hèn là nguồn gốc của mọi tội ác. Bài học mà bạn đọc nhận được từ cuốn sách này đó là: Người giàu không làm việc vì tiền, bắt tiền làm việc cho mình. Hai nữa là nếu như bạn muon làm giàu phải có vốn kiến thức nền tảng cho mình như tài chính, thị trường, cung cầu… Nếu bạn hiểu được những vấn đề này, nội dung của sách sẽ được hấp thu dễ dàng và sâu sắc hơn.');
+
+
 CREATE OR REPLACE FUNCTION getinfo_allacuser() RETURNS TABLE(name text,email varchar(255),address varchar(255),phone varchar(255))
 AS $$
 BEGIN
@@ -93,10 +107,10 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-CREATE OR REPLACE FUNCTION getinfo_acuser(in usernameinput varchar(255)) RETURNS TABLE(name text,email varchar(255),address varchar(255),phone varchar(255))
+CREATE OR REPLACE FUNCTION getinfo_acuser(in usernameinput varchar(255)) RETURNS TABLE(name text,email varchar(255),password varchar(255),address varchar(255),phone varchar(255))
 AS $$
 BEGIN
-RETURN QUERY SELECT user_info.first_name || ' '|| user_info.last_name as name, user_info.email, user_info.address, user_info.phone 
+RETURN QUERY SELECT user_info.first_name || ' '|| user_info.last_name as name, user_info.email,user_info.password, user_info.address, user_info.phone 
 FROM user_info
 WHERE status = TRUE AND user_info.username = usernameinput;
 END;
@@ -112,10 +126,10 @@ WHERE status = TRUE ;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION getinfo_nhanvien(in usernameinput varchar(255)) RETURNS TABLE(name text,email varchar(255),address varchar(255),phone varchar(255))
+CREATE OR REPLACE FUNCTION getinfo_nhanvien(in usernameinput varchar(255)) RETURNS TABLE(name text,email varchar(255),password varchar(255),address varchar(255),phone varchar(255))
 AS $$
 BEGIN
-RETURN QUERY SELECT nhanvien.first_name || ' '|| nhanvien.last_name as name, nhanvien.email, nhanvien.address, nhanvien.phone 
+RETURN QUERY SELECT nhanvien.first_name || ' '|| nhanvien.last_name as name, nhanvien.email, nhanvien.password, nhanvien.address, nhanvien.phone 
 FROM nhanvien
 WHERE status = TRUE AND nhanvien.username = usernameinput; 
 END;
