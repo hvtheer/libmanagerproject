@@ -2,7 +2,7 @@
 <?php include "test.php" ?>
 <?php
 	$signupstatus = 0;
-	$signinStatus = 0;
+	$signinStatus =0;
 ?>
 <html>
 <head>

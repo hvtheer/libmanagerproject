@@ -1,10 +1,15 @@
 <?php
 
-$last_name = $last_nameErr = $first_name = $first_nameErr = $username = $usernameErr = $password = $passwordErr = $re_password = $re_passwordErr = $email = $emailErr = $numberphone = $numberErr = $address = $addressErr ="";
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+$check = pg_prepare($Conn,"my_check",'SELECT * FROM getinfo_allacuser() WHERE $1 = $2');
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && $signinStatus != 1) {
+  $last_name = $last_nameErr = $first_name = $first_nameErr = $username = $usernameErr = $password = $passwordErr = $re_password = $re_passwordErr = $email = $emailErr = $numberphone = $numberErr = $address = $addressErr ="";
+  
     if (empty($_POST["last_name"])) {
       $last_nameErr = "Last Name is required";
+      
     } else {
+      
       $last_name = test_input($_POST["last_name"]);
       // check if name only contains letters and whitespace
     }
@@ -20,6 +25,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     else {
         $username = test_input($_POST["username"]);
+        $query = 'SELECT * FROM getinfo_allacuser() WHERE username = \''.$username.'\'';
+	      $result = pg_query($Conn,$query);
+        if(pg_num_rows($result) != 0){
+          $usernameErr = "username already exists.";
+        }
     }
     if (empty($_POST["password"])) {
         $passwordErr = "Password is required";
@@ -28,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $password = test_input($_POST["password"]); 
     }
     if (empty($_POST["re_password"])) {
-      $passwordErr = "re_Password is required";
+      $re_passwordErr = "re_Password is required";
     }  
     else{
       $re_password = test_input($_POST["re_password"]);
@@ -44,6 +54,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // check if numberphone only number
         if (!preg_match("/^[0-9]*$/",$numberphone)) {
           $numberphoneErr = "Only Number allowed";
+        }
+        else{
+          $query = 'SELECT * FROM getinfo_allacuser() WHERE phone = \''.$numberphone.'\'';
+          $result = pg_query($Conn,$query);
+          if(pg_num_rows($result) != 0){
+            $numberErr = "numberphone already exists.";
+          }
         }
       }
       if (empty($_POST["address"])) {
@@ -62,11 +79,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $emailErr = "Invalid email format";
       }
+      else {
+        $query = 'SELECT * FROM getinfo_allacuser() WHERE email = \''.$email.'\'';
+          $result = pg_query($Conn,$query);
+          if(pg_num_rows($result) != 0){
+            $emailErr = "email already exists.";
+          }
+      }
     }
     if($last_nameErr == "" && $first_nameErr == "" && $usernameErr == "" && $emailErr == "" && $addressErr == "" && $passwordErr == ""&& $usernameErr == "" && $re_passwordErr == ""&& $numberErr == ""){
       $result = pg_prepare($Conn, "my_insertuser", 'INSERT INTO user_info(first_name,last_name,username,password,email,address,phone) values($1,$2,$3,$4,$5,$6,$7)');
       if($query = pg_execute($Conn,"my_insertuser",array($first_name,$last_name,$username,$password,$email,$address,$numberphone))){
         $signupstatus = 1;
+        $signinStatus = 1;
+        $accountname = $username;
+        $typeaccount = "user";
+        $accountpassword = $password;
 ?>
                 <script>
                   alert('Created User Success!');
@@ -97,42 +125,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 				<div class="info">
 					<p>First Name</p>
 					<input type = "text" placeholder ="First name" autocomplete="on" name="first_name"> 
-					<span class="error">* <?php echo $first_nameErr;?></span>
+					<span class="error">* <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $signinStatus != 1) echo $first_nameErr;?></span>
 				</div>
 				<div class="info">
 					<p>Last Name</p>
 					<input type = "text" placeholder ="Last name" autocomplete="on" name="last_name">
-					<span class="error">* <?php echo $last_nameErr;?></span>
+					<span class="error">* <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $signinStatus != 1) echo $last_nameErr;?></span>
 				</div>
 				<div class="info">
 					<p>Username</p>
 					<input type = "text" placeholder ="Username" autocomplete="on" name="username">
-					<span class="error">* <?php echo $usernameErr;?></span>
+					<span class="error">* <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $signinStatus != 1) echo $usernameErr;?></span>
 				</div>
 				<div class="info">
 					<p>Password</p>
 					<input type = "password" placeholder ="Password" autocomplete="on" name="password">
-					<span class="error">* <?php echo $passwordErr;?></span>
+					<span class="error">* <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $signinStatus != 1) echo $passwordErr;?></span>
 				</div>
 				<div class="info">
 					<p>Repeat Password</p>
 					<input type = "password" placeholder ="Re_Password" autocomplete="on" name="re_password">
-					<span class="error">* <?php echo $re_passwordErr;?></span>
+					<span class="error">* <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $signinStatus != 1) echo $re_passwordErr;?></span>
 				</div>
 				<div class="info">
 					<p>Email</p>
 					<input type = "text" placeholder ="Email" autocomplete="on" name="email">
-					<span class="error">* <?php echo $emailErr;?></span>
+					<span class="error">* <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $signinStatus != 1) echo $emailErr;?></span>
 				</div>
 				<div class="info">
 					<p>Address</p>
 					<input type = "text" placeholder ="Address" autocomplete="on" name="address">
-					<span class="error">* <?php echo $addressErr;?></span>
+					<span class="error">* <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $signinStatus != 1) echo $addressErr;?></span>
 				</div>
 				<div class="info">
 					<p>Numberphone</p>
 					<input type = "text" placeholder ="Numberphone" autocomplete="on" name="numberphone">
-					<span class="error">* <?php echo $numberErr;?></span>
+					<span class="error">* <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $signinStatus != 1) echo $numberErr;?></span>
 				</div>
 			    <button type="submit">Sign Up</button>
 			</form>

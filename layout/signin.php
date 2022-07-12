@@ -1,14 +1,8 @@
 <?php 
-    $usernamesignin = $passwordsignin = $usernamesigninErr = $typeaccount =  "";
     
-    if($signupstatus == 1){
-        $signinStatus = 1;
-        $usernamesignin = $username;
-        $typeaccount = "user";
-        $passwordsignin = $password;
-        $signupstatus = 0;
-    }
-    if ($_SERVER["REQUEST_METHOD"] == "POST" && $signupstatus == 0 && $signinStatus = 0){
+    if ($_SERVER["REQUEST_METHOD"] == "POST"){
+        $usernamesignin = $passwordsignin = $usernamesigninErr = $typeaccount = $accountname = $accountpassword =  "";
+    
     if(empty($_POST["signinusername"])){
         $usernamesigninErr = "username must not empty.";
     }
@@ -25,7 +19,7 @@
                 if($row = pg_fetch_assoc($result)){
                     if($row["password"] == $passwordsignin){
                         $accountname = $usernamesignin;
-                        $accounttype = $_POST["typeaccount"];
+                        $typeaccount = $_POST["typeaccount"];
                         $accountpassword = $passwordsignin;
                         $signinStatus = 1;
                     }
@@ -57,7 +51,7 @@
                     if($row["password"] == $passwordsignin){
                         $signinStatus = 1;
                         $accountname = $usernamesignin;
-                        $accounttype = $_POST["typeaccount"];
+                        $typeaccount = $_POST["typeaccount"];
                         $accountpassword = $passwordsignin;
                     }
 
@@ -89,7 +83,7 @@
 					<ul>
 						<li><p>Username</p></li>
 						<li><input type = "text" placeholder ="Username" autocomplete="on" name="signinusername"></li>
-                        <span class="error" style = "color:red;"> <?php echo $usernamesigninErr;?></span>
+                        <span class="error" style = "color:red;"> <?php if($_SERVER["REQUEST_METHOD"] == "POST") echo $usernamesigninErr;?></span>
 					</ul>
 				</div>
 				<div class = "info">

@@ -96,11 +96,17 @@ INSERT INTO book(book_name,type,author,available,description)
 values('Dạy Con Làm Giàu','Psychology','Robert Kiyosaki',17,'Cuốn sách Dạy Con Làm Giàu nói về cách làm sinh ra đồng tiền và quan điểm rất hay về đồng tiền., khơi dậy khả năng kiếm tiền của mỗi cá nhân.
 Hai quan điểm khác nhau đó là: Tham tiền là một tội ác, còn người kia lại bảo Nghèo hèn là nguồn gốc của mọi tội ác. Bài học mà bạn đọc nhận được từ cuốn sách này đó là: Người giàu không làm việc vì tiền, bắt tiền làm việc cho mình. Hai nữa là nếu như bạn muon làm giàu phải có vốn kiến thức nền tảng cho mình như tài chính, thị trường, cung cầu… Nếu bạn hiểu được những vấn đề này, nội dung của sách sẽ được hấp thu dễ dàng và sâu sắc hơn.');
 
+INSERT INTO book(book_name,type,author,available,description) 
+values('Zen and the Art of Motorcycle Maintenance','Psychology','Robert M. Pirsig',12,'Viết về một hành trình đi khắp nước Mỹ trong mùa hè của một người cha và cậu con trai, cuốn sách Zen And The Art Of Motorcycle Maintenance còn là một hành trình triết học với đầy những câu hỏi cơ bản về cuộc sống và cách sống trên đời.
 
-CREATE OR REPLACE FUNCTION getinfo_allacuser() RETURNS TABLE(name text,email varchar(255),address varchar(255),phone varchar(255))
+');
+
+
+
+CREATE OR REPLACE FUNCTION getinfo_allacuser() RETURNS TABLE(name text, username varchar(255),email varchar(255), password varchar(255),address varchar(255),phone varchar(255))
 AS $$
 BEGIN
-RETURN QUERY SELECT user_info.first_name || ' '|| user_info.last_name as name, user_info.email, user_info.address, user_info.phone 
+RETURN QUERY SELECT user_info.first_name || ' '|| user_info.last_name as name, user_info.username, user_info.email, user_info.password, user_info.address, user_info.phone 
 FROM user_info
 WHERE status = TRUE;
 END;
@@ -117,10 +123,10 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-CREATE OR REPLACE FUNCTION getinfo_allnhanvien() RETURNS TABLE(name text,email varchar(255),address varchar(255),phone varchar(255))
+CREATE OR REPLACE FUNCTION getinfo_allnhanvien() RETURNS TABLE(name text,username varchar(255), email varchar(255), password varchar(255), address varchar(255),phone varchar(255))
 AS $$
 BEGIN
-RETURN QUERY SELECT nhanvien.first_name || ' '|| nhanvien.last_name as name, nhanvien.email, nhanvien.address, nhanvien.phone 
+RETURN QUERY SELECT nhanvien.first_name || ' '|| nhanvien.last_name as name,nhanvien.username , nhanvien.email, nhanvien.phone, nhanvien.address, nhanvien.phone 
 FROM nhanvien
 WHERE status = TRUE ;
 END;

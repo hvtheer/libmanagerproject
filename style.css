@@ -29,7 +29,7 @@ body{
     left: 25%;
 }
 .signinbox button{
-    position: sticky;
+    position: absolute;
     border: none;
     margin-left: 80px;
     margin-top: 7px;
@@ -92,9 +92,10 @@ span.show-btn{
     left: 12%;
 }
 .box button{
-    position: sticky;
+    position: absolute;
     border: none;
-    margin-left: 80px;
+    margin-left: 620px;
+    margin-top: -30px;
     width: 149px;
     height: 30px;
     border-radius: 5px;
@@ -103,9 +104,8 @@ span.show-btn{
     transition: 0.2s;
 }
 .box .info{
-    padding: -20px;
-    margin-left: 120px;
-    display: inline-block;
+    margin-left: 100px;
+    display: block;
 }
 .box p{
     margin-left: 10px;
@@ -117,6 +117,9 @@ span.show-btn{
     box-shadow: 5px 10px thistle;
     background-color: #E5F6FA;
     
+}
+.error{
+    color:red;
 }
 .optional li{
     float: right;
