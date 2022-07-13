@@ -18,11 +18,11 @@
 	<?php if($_SESSION["signinstatus"] == 0){  ?>
 	<?php include "layout/header.php" ?>
 	<?php }
-	else  { ?>
-		<?php include "accountindex/header_account.php" ?>
+	else { ?>
+		<?php include "layout/dropdown.php" ?>
 	<?php 
-	} 
-?>
+	}
+	?>
 
 
 	<div class="imageintro">
