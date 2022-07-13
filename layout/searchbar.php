@@ -16,4 +16,4 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 			<input type = "search" placeholder ="Search Book" autocomplete="on" name="searchbook"> 
 			<button type="submit"><i class="fa fa-search"></i></button>
 		</form>
-	</div>
+</div>

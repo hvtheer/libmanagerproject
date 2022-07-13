@@ -1,8 +1,5 @@
 <?php
-
-$check = pg_prepare($Conn,"my_check",'SELECT * FROM getinfo_allacuser() WHERE $1 = $2');
-
-if ($_SERVER["REQUEST_METHOD"] == "POST" && $_SESSION["signinstatus"] != 1) {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && $_SESSION["signupstatus"] != 1) {
   $last_name = $last_nameErr = $first_name = $first_nameErr = $username = $usernameErr = $password = $passwordErr = $re_password = $re_passwordErr = $email = $emailErr = $numberphone = $numberErr = $address = $addressErr ="";
   
     if (empty($_POST["last_name"])) {
@@ -125,42 +122,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $_SESSION["signinstatus"] != 1) {
 				<div class="info">
 					<p>First Name</p>
 					<input type = "text" placeholder ="First name" autocomplete="on" name="first_name"> 
-					<span class="error">* <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $signinStatus != 1) echo $first_nameErr;?></span>
+					<span class="error">* <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $_SESSION["signinstatus"] != 1) echo $first_nameErr;?></span>
 				</div>
 				<div class="info">
 					<p>Last Name</p>
 					<input type = "text" placeholder ="Last name" autocomplete="on" name="last_name">
-					<span class="error">* <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $signinStatus != 1) echo $last_nameErr;?></span>
+					<span class="error">* <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $_SESSION["signinstatus"] != 1) echo $last_nameErr;?></span>
 				</div>
 				<div class="info">
 					<p>Username</p>
 					<input type = "text" placeholder ="Username" autocomplete="on" name="username">
-					<span class="error">* <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $signinStatus != 1) echo $usernameErr;?></span>
+					<span class="error">* <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $_SESSION["signinstatus"] != 1) echo $usernameErr;?></span>
 				</div>
 				<div class="info">
 					<p>Password</p>
 					<input type = "password" placeholder ="Password" autocomplete="on" name="password">
-					<span class="error">* <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $signinStatus != 1) echo $passwordErr;?></span>
+					<span class="error">* <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $_SESSION["signinstatus"] != 1) echo $passwordErr;?></span>
 				</div>
 				<div class="info">
 					<p>Repeat Password</p>
 					<input type = "password" placeholder ="Re_Password" autocomplete="on" name="re_password">
-					<span class="error">* <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $signinStatus != 1) echo $re_passwordErr;?></span>
+					<span class="error">* <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $_SESSION["signinstatus"] != 1) echo $re_passwordErr;?></span>
 				</div>
 				<div class="info">
 					<p>Email</p>
 					<input type = "text" placeholder ="Email" autocomplete="on" name="email">
-					<span class="error">* <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $signinStatus != 1) echo $emailErr;?></span>
+					<span class="error">* <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $_SESSION["signinstatus"] != 1) echo $emailErr;?></span>
 				</div>
 				<div class="info">
 					<p>Address</p>
 					<input type = "text" placeholder ="Address" autocomplete="on" name="address">
-					<span class="error">* <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $signinStatus != 1) echo $addressErr;?></span>
+					<span class="error">* <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $_SESSION["signinstatus"] != 1) echo $addressErr;?></span>
 				</div>
 				<div class="info">
 					<p>Numberphone</p>
 					<input type = "text" placeholder ="Numberphone" autocomplete="on" name="numberphone">
-					<span class="error">* <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $signinStatus != 1) echo $numberErr;?></span>
+					<span class="error">* <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $_SESSION["signinstatus"] != 1) echo $numberErr;?></span>
 				</div>
 			    <button type="submit">Sign Up</button>
 			</form>

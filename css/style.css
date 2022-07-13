@@ -122,6 +122,7 @@ span.show-btn{
     color:red;
 }
 .optional li{
+    position: relative;
     float: right;
     margin-top: 10px;
     margin-right: 50px;
@@ -136,11 +137,13 @@ span.show-btn{
     opacity: 0.8;
     transition: 0.2s;
 }
+
 .optional li:hover{
    transform: scale(1.1);
    opacity: 1;
 }
 .optional li{
+    justify-content: flex-end;
     color: #B6DDDA;
     border-color: lightcoral;
 }
