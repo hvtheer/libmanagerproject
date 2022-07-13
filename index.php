@@ -1,9 +1,6 @@
 <?php include "disconn_andconn/dbconnect.php" ?>
 <?php include "test.php" ?>
-<?php
-	$signupstatus = 0;
-	$signinStatus =0;
-?>
+<?php include "status.php" ?>
 <html>
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -17,13 +14,22 @@
 	
 	<?php include "layout/signin.php" ?>
 	<?php include "layout/signup.php" ?>
+	<?php if($_SESSION["signinstatus"] == 0){  ?>
 	<?php include "layout/header.php" ?>
-	
+	<?php }
+	else { ?>
+		<a href = "logout.php">logout</a>
+	<?php 
+	}
+	?>
+
+	<?php echo $_SESSION["typeaccount"] ." ". $_SESSION["accountname"] ." ". $_SESSION["accountpassword"] ; ?>
 	<div class="imageintro">
 		<img src = "images/Introlib.jpeg">
 	</div>
 	<?php include "layout/searchbar.php" ?>
 	<?php include "layout/searchbooktable.php" ?>
     <?php include "disconn_andconn/disconnectdb.php" ?>
+	
 </body>
 <script src="app.js"></script>

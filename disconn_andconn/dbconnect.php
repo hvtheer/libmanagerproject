@@ -4,5 +4,6 @@ if (!$Conn) {
     echo "An error occurred.\n";
     exit;
 }
+session_start();
 // Query data
 ?>

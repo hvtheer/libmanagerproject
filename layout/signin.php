@@ -1,7 +1,7 @@
 <?php 
     
-    if ($_SERVER["REQUEST_METHOD"] == "POST"){
-        $usernamesignin = $passwordsignin = $usernamesigninErr = $typeaccount = $accountname = $accountpassword =  "";
+    if ($_SERVER["REQUEST_METHOD"] == "POST"&&!$_SESSION["signupstatus"]){
+        $usernamesignin = $passwordsignin = $usernamesigninErr =  "";
     
     if(empty($_POST["signinusername"])){
         $usernamesigninErr = "username must not empty.";
@@ -18,13 +18,13 @@
             else{
                 if($row = pg_fetch_assoc($result)){
                     if($row["password"] == $passwordsignin){
-                        $accountname = $usernamesignin;
-                        $typeaccount = $_POST["typeaccount"];
-                        $accountpassword = $passwordsignin;
-                        $signinStatus = 1;
+                        $_SESSION["accountname"] = $usernamesignin;
+                        $_SESSION["typeaccount"] = $_POST["typeaccount"];
+                        $_SESSION["accountpassword"] = $passwordsignin;
+                        $_SESSION["signinstatus"] = 1;
                     }
                 }
-                if($signinStatus){
+                if($_SESSION["signinstatus"]){
 ?>
                 <script>
                     alert('login user account suscess!');
@@ -49,14 +49,14 @@
             else{
                 if($row = pg_fetch_assoc($result)){
                     if($row["password"] == $passwordsignin){
-                        $signinStatus = 1;
-                        $accountname = $usernamesignin;
-                        $typeaccount = $_POST["typeaccount"];
-                        $accountpassword = $passwordsignin;
+                        $_SESSION["signinstatus"] = 1;
+                        $_SESSION["accountname"] = $usernamesignin;
+                        $_SESSION["typeaccount"] = $_POST["typeaccount"];
+                        $_SESSION["accountpassword"] = $passwordsignin;
                     }
 
                 }
-                if($signinStatus){
+                if($_SESSION["signinstatus"]){
 ?>
                 <script>
                    

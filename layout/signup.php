@@ -2,7 +2,7 @@
 
 $check = pg_prepare($Conn,"my_check",'SELECT * FROM getinfo_allacuser() WHERE $1 = $2');
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && $signinStatus != 1) {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && $_SESSION["signinstatus"] != 1) {
   $last_name = $last_nameErr = $first_name = $first_nameErr = $username = $usernameErr = $password = $passwordErr = $re_password = $re_passwordErr = $email = $emailErr = $numberphone = $numberErr = $address = $addressErr ="";
   
     if (empty($_POST["last_name"])) {
@@ -90,11 +90,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $signinStatus != 1) {
     if($last_nameErr == "" && $first_nameErr == "" && $usernameErr == "" && $emailErr == "" && $addressErr == "" && $passwordErr == ""&& $usernameErr == "" && $re_passwordErr == ""&& $numberErr == ""){
       $result = pg_prepare($Conn, "my_insertuser", 'INSERT INTO user_info(first_name,last_name,username,password,email,address,phone) values($1,$2,$3,$4,$5,$6,$7)');
       if($query = pg_execute($Conn,"my_insertuser",array($first_name,$last_name,$username,$password,$email,$address,$numberphone))){
-        $signupstatus = 1;
-        $signinStatus = 1;
-        $accountname = $username;
-        $typeaccount = "user";
-        $accountpassword = $password;
+        $_SESSION["signupstatus"] = 1;
+        $_SESSION["signinstatus"] = 1;
+        $_SESSION["accountname"] = $username;
+        $_SESSION["typeaccount"] = "user";
+        $_SESSION["accountpassword"] = $password;
 ?>
                 <script>
                   alert('Created User Success!');
