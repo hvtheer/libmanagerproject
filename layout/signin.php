@@ -22,6 +22,13 @@
                         $_SESSION["typeaccount"] = $_POST["typeaccount"];
                         $_SESSION["accountpassword"] = $passwordsignin;
                         $_SESSION["signinstatus"] = 1;
+                        $_SESSION["account_id"] = $row["userinfo_id"];
+                        $_SESSION["firstname"] = $row["first_name"];
+                        $_SESSION["lastname"] = $row["last_name"];
+                        $_SESSION["email"] = $row["email"]; 
+                        $_SESSION["address"] = $row["address"];
+                        $_SESSION["phone"] = $row["phone"];
+                        $_SESSION["status"] = $row["status"];  
                     }
                 }
                 if($_SESSION["signinstatus"]){
@@ -53,6 +60,13 @@
                         $_SESSION["accountname"] = $usernamesignin;
                         $_SESSION["typeaccount"] = $_POST["typeaccount"];
                         $_SESSION["accountpassword"] = $passwordsignin;
+                        $_SESSION["account_id"] = $row["nhanvien_id"];
+                        $_SESSION["firstname"] = $row["first_name"];
+                        $_SESSION["lastname"] = $row["last_name"];
+                        $_SESSION["email"] = $row["email"]; 
+                        $_SESSION["address"] = $row["address"];
+                        $_SESSION["phone"] = $row["phone"];
+                        $_SESSION["status"] = $row["status"];  
                     }
 
                 }
