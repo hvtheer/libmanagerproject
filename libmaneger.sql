@@ -103,75 +103,75 @@ values('Zen and the Art of Motorcycle Maintenance','Psychology','Robert M. Pirsi
 
 
 
-CREATE OR REPLACE FUNCTION getinfo_allacuser() RETURNS TABLE(name text, username varchar(255),email varchar(255), password varchar(255),address varchar(255),phone varchar(255))
+CREATE OR REPLACE FUNCTION getinfo_allacuser() RETURNS TABLE(userinfo_id INTEGER, name text, username varchar(255),email varchar(255), password varchar(255),address varchar(255),phone varchar(255))
 AS $$
 BEGIN
-RETURN QUERY SELECT user_info.first_name || ' '|| user_info.last_name as name, user_info.username, user_info.email, user_info.password, user_info.address, user_info.phone 
+RETURN QUERY SELECT user_info.userinfo_id, user_info.first_name || ' '|| user_info.last_name as name, user_info.username, user_info.email, user_info.password, user_info.address, user_info.phone 
 FROM user_info
 WHERE status = TRUE;
 END;
 $$ LANGUAGE plpgsql;
 
 
-CREATE OR REPLACE FUNCTION getinfo_acuser(in usernameinput varchar(255)) RETURNS TABLE(name text,email varchar(255),password varchar(255),address varchar(255),phone varchar(255))
+CREATE OR REPLACE FUNCTION getinfo_acuser(in usernameinput varchar(255)) RETURNS TABLE(userinfo_id INTEGER, name text,email varchar(255),password varchar(255),address varchar(255),phone varchar(255))
 AS $$
 BEGIN
-RETURN QUERY SELECT user_info.first_name || ' '|| user_info.last_name as name, user_info.email,user_info.password, user_info.address, user_info.phone 
+RETURN QUERY SELECT user_info.userinfo_id, user_info.first_name || ' '|| user_info.last_name as name, user_info.email,user_info.password, user_info.address, user_info.phone 
 FROM user_info
 WHERE status = TRUE AND user_info.username = usernameinput;
 END;
 $$ LANGUAGE plpgsql;
 
 
-CREATE OR REPLACE FUNCTION getinfo_allnhanvien() RETURNS TABLE(name text,username varchar(255), email varchar(255), password varchar(255), address varchar(255),phone varchar(255))
+CREATE OR REPLACE FUNCTION getinfo_allnhanvien() RETURNS TABLE(nhanvien_id INTEGER, name text,username varchar(255), email varchar(255), password varchar(255), address varchar(255),phone varchar(255))
 AS $$
 BEGIN
-RETURN QUERY SELECT nhanvien.first_name || ' '|| nhanvien.last_name as name,nhanvien.username , nhanvien.email, nhanvien.phone, nhanvien.address, nhanvien.phone 
+RETURN QUERY SELECT nhanvien.nhanvien_id, nhanvien.first_name || ' '|| nhanvien.last_name as name,nhanvien.username , nhanvien.email, nhanvien.phone, nhanvien.address, nhanvien.phone 
 FROM nhanvien
 WHERE status = TRUE ;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION getinfo_nhanvien(in usernameinput varchar(255)) RETURNS TABLE(name text,email varchar(255),password varchar(255),address varchar(255),phone varchar(255))
+CREATE OR REPLACE FUNCTION getinfo_nhanvien(in usernameinput varchar(255)) RETURNS TABLE(nhanvien_id INTEGER, name text,email varchar(255),password varchar(255),address varchar(255),phone varchar(255))
 AS $$
 BEGIN
-RETURN QUERY SELECT nhanvien.first_name || ' '|| nhanvien.last_name as name, nhanvien.email, nhanvien.password, nhanvien.address, nhanvien.phone 
+RETURN QUERY SELECT nhanvien.nhanvien_id, nhanvien.first_name || ' '|| nhanvien.last_name as name, nhanvien.email, nhanvien.password, nhanvien.address, nhanvien.phone 
 FROM nhanvien
 WHERE status = TRUE AND nhanvien.username = usernameinput; 
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION getinfo_availablebook() RETURNS TABLE(name varchar(255),type varchar(255), author varchar(255),available INTEGER)
+CREATE OR REPLACE FUNCTION getinfo_availablebook() RETURNS TABLE(book_id INTEGER, name varchar(255),type varchar(255), author varchar(255),available INTEGER)
 AS $$
 BEGIN
-RETURN QUERY SELECT book.book_name , book.type, book.author, book.available 
+RETURN QUERY SELECT book.book_id, book.book_name, book.type, book.author, book.available 
 FROM book
 WHERE book.available > 0;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION find_availablebookByname(input_name varchar(255)) RETURNS TABLE(name varchar(255),type varchar(255), author varchar(255),available INTEGER)
+CREATE OR REPLACE FUNCTION find_availablebookByname(input_name varchar(255)) RETURNS TABLE(book_id INTEGER, name varchar(255),type varchar(255), author varchar(255),available INTEGER)
 AS $$
 BEGIN
-RETURN QUERY SELECT book.book_name , book.type, book.author, book.available
+RETURN QUERY SELECT book.book_id, book.book_name , book.type, book.author, book.available
 FROM book
 WHERE book.available > 0 AND (SELECT POSITION(input_name IN book.book_name) > 0);
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION find_availablebookBytype(input_type varchar(255)) RETURNS TABLE(name varchar(255),type varchar(255), author varchar(255),available INTEGER)
+CREATE OR REPLACE FUNCTION find_availablebookBytype(input_type varchar(255)) RETURNS TABLE(book_id INTEGER, name varchar(255),type varchar(255), author varchar(255),available INTEGER)
 AS $$
 BEGIN
-RETURN QUERY SELECT book.book_name , book.type, book.author, book.available
+RETURN QUERY SELECT book.book_id, book.book_name , book.type, book.author, book.available
 FROM book
 WHERE book.available > 0 AND (SELECT POSITION(input_type IN book.type) > 0);
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION find_availablebookByauthor(input_author varchar(255)) RETURNS TABLE(name varchar(255),type varchar(255), author varchar(255),available INTEGER)
+CREATE OR REPLACE FUNCTION find_availablebookByauthor(input_author varchar(255)) RETURNS TABLE(book_id INTEGER, name varchar(255),type varchar(255), author varchar(255),available INTEGER)
 AS $$
 BEGIN
-RETURN QUERY SELECT book.book_name , book.type, book.author, book.available
+RETURN QUERY SELECT book.book_id, book.book_name , book.type, book.author, book.available
 FROM book
 WHERE book.available > 0 AND (SELECT POSITION(input_author IN book.author) > 0);
 END;
@@ -200,7 +200,7 @@ CREATE OR REPLACE FUNCTION add_transactions() RETURNS TRIGGER
 AS $$
 BEGIN
         IF 
-            (SELECT available from book where book.book_id = NEW.book_id) > 0 AND (select status from user_info where NEW.userinfo_id = user_info.userinfo_id) = TRUE
+            (SELECT available from book where book.book_id = NEW.book_id) > 0 AND (select status from user_info where NEW.userinfo_id = user_info.userinfo_id) = TRUE 
         THEN 
            UPDATE book SET available = available - 1 WHERE book.book_id = NEW.book_id;
            
@@ -221,7 +221,7 @@ CREATE OR REPLACE FUNCTION add_transactionsa() RETURNS TRIGGER
 AS $$
 BEGIN   
         IF 
-            (SELECT available from book where book.book_id = NEW.book_id) > 0 AND (select status from user_info where NEW.userinfo_id = user_info.userinfo_id) = TRUE
+            (SELECT available from book where book.book_id = NEW.book_id) >= 0 AND (select status from user_info where NEW.userinfo_id = user_info.userinfo_id) = TRUE
         THEN 
            INSERT INTO transaction_info(transaction_id) values (NEW.transaction_id);
            RETURN NEW;    

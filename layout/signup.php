@@ -1,5 +1,5 @@
 <?php
-if ($_SERVER["REQUEST_METHOD"] == "POST" && $_SESSION["signupstatus"] != 1) {
+if ($_SESSION["signinstatus"] != 1&&$_SERVER["REQUEST_METHOD"] == "POST") {
   $last_name = $last_nameErr = $first_name = $first_nameErr = $username = $usernameErr = $password = $passwordErr = $re_password = $re_passwordErr = $email = $emailErr = $numberphone = $numberErr = $address = $addressErr ="";
   
     if (empty($_POST["last_name"])) {
@@ -87,11 +87,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $_SESSION["signupstatus"] != 1) {
     if($last_nameErr == "" && $first_nameErr == "" && $usernameErr == "" && $emailErr == "" && $addressErr == "" && $passwordErr == ""&& $usernameErr == "" && $re_passwordErr == ""&& $numberErr == ""){
       $result = pg_prepare($Conn, "my_insertuser", 'INSERT INTO user_info(first_name,last_name,username,password,email,address,phone) values($1,$2,$3,$4,$5,$6,$7)');
       if($query = pg_execute($Conn,"my_insertuser",array($first_name,$last_name,$username,$password,$email,$address,$numberphone))){
+        $result = pg_query($Conn,'SELECT * FROM getinfo_acuser(\''.$username.'\')');
+        $row = pg_fetch_assoc($result);
         $_SESSION["signupstatus"] = 1;
         $_SESSION["signinstatus"] = 1;
         $_SESSION["accountname"] = $username;
         $_SESSION["typeaccount"] = "user";
         $_SESSION["accountpassword"] = $password;
+        $_SESSION["account_id"]= $row["userinfo_id"]
 ?>
                 <script>
                   alert('Created User Success!');

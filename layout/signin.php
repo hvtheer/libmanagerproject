@@ -22,6 +22,7 @@
                         $_SESSION["typeaccount"] = $_POST["typeaccount"];
                         $_SESSION["accountpassword"] = $passwordsignin;
                         $_SESSION["signinstatus"] = 1;
+                        $_SESSION["account_id"] = $row["userinfo_id"];   
                     }
                 }
                 if($_SESSION["signinstatus"]){
@@ -53,6 +54,7 @@
                         $_SESSION["accountname"] = $usernamesignin;
                         $_SESSION["typeaccount"] = $_POST["typeaccount"];
                         $_SESSION["accountpassword"] = $passwordsignin;
+                        $_SESSION["account_id"] = $row["nhanvien_id"];
                     }
 
                 }
