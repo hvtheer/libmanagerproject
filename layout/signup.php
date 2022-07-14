@@ -91,7 +91,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $_SESSION["signupstatus"] != 1) {
         $_SESSION["signinstatus"] = 1;
         $_SESSION["accountname"] = $username;
         $_SESSION["typeaccount"] = "user";
-        $_SESSION["accountpassword"] = $password;
+        $_SESSION["accountfirstname"] = $first_name;
+	$_SESSION["accountlastname"] = $last_name;
+	$_SESSION["accountemail"] = $email;
+	$_SESSION["accountaddress"] = $address;
+	$_SESSION["accountphone"] = $numberphone;
 ?>
                 <script>
                   alert('Created User Success!');
