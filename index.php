@@ -33,7 +33,8 @@
 	<?php include "layout/searchbar.php" ?>
 	<?php include "layout/searchbooktable.php" ?>
 	<?php }else { ?>
-
+		<?php include "nhanvienindex/searchbar.php" ?>
+		<?php include "nhanvienindex/searchtransaction.php" ?>
 	<?php } ?>
     <?php include "disconn_andconn/disconnectdb.php" ?>
 	

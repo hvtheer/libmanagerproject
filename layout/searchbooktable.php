@@ -36,11 +36,14 @@ while ($row = pg_fetch_assoc($result)) {
  		<td><?php  echo $row["type"]; ?></td>
  		<td><?php  echo $row["author"]; ?></td>
  		<td><?php  echo $row["available"]; ?></td>
+<?php if($_SESSION["signinstatus"]){ ?>
  		<td>
 		 <form action="layout\create_transaction.php" method = "POST">
 				<input type="hidden" name = "borrowbook_id" value = "<?php echo $row["book_id"]; ?>"> 
-		 		<button type= "submit">Muon</button>
+		 		<button type= "submit">Borrow</button>
 			</form></td>
+<?php
+}?>
  	</tr>
 <?php
 }

@@ -182,7 +182,7 @@ AS $$
 BEGIN
 RETURN QUERY SELECT user_info.first_name || ' ' || user_info.last_name as name, book.book_name, transaction_info.borrowDate, transaction_info.dueDate 
 FROM ((transaction inner join transaction_info on transaction_info.transaction_id = transaction.transaction_id) inner join user_info on transaction.userinfo_id = user_info.userinfo_id) inner join book on book.book_id = transaction.book_id 
-WHERE user_info.status = TRUE AND transaction.status = FALSE AND itransaction_id = transaction.transaction_id; 
+WHERE user_info.status = TRUE AND transaction.status = FALSE AND transaction_id = transaction.transaction_id; 
 END;
 $$ LANGUAGE plpgsql;
 
@@ -200,7 +200,7 @@ CREATE OR REPLACE FUNCTION add_transactions() RETURNS TRIGGER
 AS $$
 BEGIN
         IF 
-            (SELECT available from book where book.book_id = NEW.book_id) > 0 AND (select status from user_info where NEW.userinfo_id = user_info.userinfo_id) = TRUE 
+            (SELECT available from book where book.book_id = NEW.book_id) > 0 AND (select status from user_info where NEW.userinfo_id = user_info.userinfo_id) = TRUE AND (select count(transaction_id) from user_info LEFT JOIN transaction ON user_info.userinfo_id = transaction.userinfo_id group by user_info.userinfo_id having user_info.userinfo_id = NEW.userinfo_id) < 5
         THEN 
            UPDATE book SET available = available - 1 WHERE book.book_id = NEW.book_id;
            
@@ -221,7 +221,7 @@ CREATE OR REPLACE FUNCTION add_transactionsa() RETURNS TRIGGER
 AS $$
 BEGIN   
         IF 
-            (SELECT available from book where book.book_id = NEW.book_id) >= 0 AND (select status from user_info where NEW.userinfo_id = user_info.userinfo_id) = TRUE
+            (SELECT available from book where book.book_id = NEW.book_id) > 0 AND (select status from user_info where NEW.userinfo_id = user_info.userinfo_id) = TRUE 
         THEN 
            INSERT INTO transaction_info(transaction_id) values (NEW.transaction_id);
            RETURN NEW;    
