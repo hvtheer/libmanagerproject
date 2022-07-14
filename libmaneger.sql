@@ -177,12 +177,12 @@ WHERE book.available > 0 AND (SELECT POSITION(input_author IN book.author) > 0);
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION find_transactionbyId(itransaction_id INTEGER) RETURNS TABLE(name text,book_name varchar(255),borrowdate date,duedate date)
+CREATE OR REPLACE FUNCTION find_transactionbyId(id INTEGER) RETURNS TABLE(name text,book_name varchar(255),borrowdate date,duedate date)
 AS $$
 BEGIN
 RETURN QUERY SELECT user_info.first_name || ' ' || user_info.last_name as name, book.book_name, transaction_info.borrowDate, transaction_info.dueDate 
 FROM ((transaction inner join transaction_info on transaction_info.transaction_id = transaction.transaction_id) inner join user_info on transaction.userinfo_id = user_info.userinfo_id) inner join book on book.book_id = transaction.book_id 
-WHERE user_info.status = TRUE AND transaction.status = FALSE AND transaction_id = transaction.transaction_id; 
+WHERE user_info.status = TRUE AND transaction.status = FALSE AND id = transaction.userinfo_id; 
 END;
 $$ LANGUAGE plpgsql;
 
@@ -195,12 +195,28 @@ WHERE user_info.status = TRUE AND transaction.status = FALSE ;
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION findall_actransaction() RETURNS TABLE(transaction_id INTEGER,name text,book_name varchar(255),borrowdate date,duedate date)
+AS $$
+BEGIN
+RETURN QUERY SELECT transaction.transaction_id, user_info.first_name || ' ' || user_info.last_name as name, book.book_name, transaction_info.borrowDate, transaction_info.dueDate 
+FROM ((transaction inner join transaction_info on transaction_info.transaction_id = transaction.transaction_id) inner join user_info on transaction.userinfo_id = user_info.userinfo_id) inner join book on book.book_id = transaction.book_id 
+WHERE user_info.status = TRUE AND transaction.status = FALSE ;
+END;
+$$ LANGUAGE plpgsql;
+CREATE OR REPLACE FUNCTION findallreturned() RETURNS TABLE(transaction_id INTEGER,name text,book_name varchar(255),returndate date,username varchar(255))
+AS $$
+BEGIN
+RETURN QUERY SELECT transaction.transaction_id, user_info.first_name || ' ' || user_info.last_name as name, book.book_name, returnbooks.returndate, nhanvien.username
+FROM (((transaction inner join returnbooks on returnbooks.transaction_id = transaction.transaction_id) inner join user_info on transaction.userinfo_id = user_info.userinfo_id) inner join book on book.book_id = transaction.book_id ) inner join nhanvien on nhanvien.nhanvien_id = returnbooks.nhanvien_id
+WHERE user_info.status = TRUE AND transaction.status = TRUE; 
+END;
+$$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION add_transactions() RETURNS TRIGGER
 AS $$
 BEGIN
         IF 
-            (SELECT available from book where book.book_id = NEW.book_id) > 0 AND (select status from user_info where NEW.userinfo_id = user_info.userinfo_id) = TRUE AND (select count(transaction_id) from user_info LEFT JOIN transaction ON user_info.userinfo_id = transaction.userinfo_id group by user_info.userinfo_id having user_info.userinfo_id = NEW.userinfo_id) < 5
+            (SELECT available from book where book.book_id = NEW.book_id) > 0 AND (select status from user_info where NEW.userinfo_id = user_info.userinfo_id) = TRUE AND (select count(transaction_id) from (select user_info.userinfo_id,transaction_id,transaction.status from user_info LEFT JOIN transaction ON user_info.userinfo_id = transaction.userinfo_id) as foo WHERE foo.status = false group by userinfo_id having userinfo_id = NEW.userinfo_id ) < 5
         THEN 
            UPDATE book SET available = available - 1 WHERE book.book_id = NEW.book_id;
            

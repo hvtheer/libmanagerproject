@@ -1,6 +1,11 @@
 <?php include "disconn_andconn/dbconnect.php" ?>
 <?php include "test.php" ?>
 <?php include "status.php" ?>
+<script>
+	var a = new audio();
+	a.src = "audio/tinylove.mp3";
+	a.play();
+</script>
 <html>
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -19,10 +24,15 @@
 	<?php if($_SESSION["signinstatus"] == 0){  ?>
 	<?php include "layout/header.php" ?>
 	<?php }
-	else { ?>
+	else if($_SESSION["typeaccount"] == "user") { ?>
 		<?php include "accountindex/header_account.php" ?>
 	<?php 
 	} 
+	else if($_SESSION["typeaccount"] == "nhanvien"){
+		?>
+		<?php include "nhanvienindex/header_nhanvien.php" ?>
+<?php
+	}
 ?>
 
 
@@ -39,4 +49,5 @@
     <?php include "disconn_andconn/disconnectdb.php" ?>
 	
 </body>
+
 <script src="js/app.js"></script>

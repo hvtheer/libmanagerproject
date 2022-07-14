@@ -7,7 +7,7 @@
         <ul>
             <li class = "logout"><a href = "logout.php">logout </a></li>
             <li class = "profile"><a href = "profileuser.php">Profile</a></li>
-            <li class = "borrowing book"><a href = "accountindex/borrowingbook.php">Borrowing</a></li>
+            <li class = "confirmed book"><a href = "nhanvienindex/confirmedbook.php">Confirmed</a></li>
         </ul>
     </div>
 </div>

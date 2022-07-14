@@ -3,14 +3,14 @@
 <?php include "disconn_andconn/dbconnect.php" ?>
 <?php
     if($_SESSION["account_id"]&&$_SESSION["borrowbook_id"]){
-        $query = 'SELECT count(transaction_id) FROM user_info LEFT JOIN transaction ON user_info.userinfo_id = transaction.userinfo_id group by user_info.userinfo_id having user_info.userinfo_id = '.$_SESSION["account_id"];
+        $query = 'SELECT count(transaction_id) FROM (SELECT user_info.userinfo_id,transaction_id,transaction.status FROM user_info LEFT JOIN transaction ON user_info.userinfo_id = transaction.userinfo_id) AS foo WHERE foo.status = false GROUP BY userinfo_id HAVING userinfo_id = '.$_SESSION["account_id"];
         $result = pg_query($Conn,$query);
         if($row = pg_fetch_assoc($result) ){
-            $ct = $row["count"];
+            $cter1 = $row["count"];
         }
         $query = 'INSERT INTO transaction(userinfo_id,book_id) values('.$_SESSION["account_id"].','.$_SESSION["borrowbook_id"].')';
         $result = pg_query($Conn,$query);
-        if($result && $ct < 5){
+        if($result && $cter1 < 5){
 ?>
         <script>
             alert('borrow success!');
