@@ -5,9 +5,9 @@
     <p><?php echo "Hello ". $_SESSION["typeaccount"] ." ". $_SESSION["accountname"]; ?></p>
     <div class ="optionaluser">
         <ul>
-            <li class = "logout"><a href = "logout.php">logout </a></li>
-            <li class = "profile"><a href = "profileuser.php">Profile</a></li>
-            <li class = "borrowing book"><a href = "accountindex/borrowingbook.php">Borrowing</a></li>
+            <li class = "logout" style = "font-size:12px;"><a href = "logout.php"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
+            <li class = "profile" style = "font-size:12px;"><a href = "profileuser.php"><i class="fas fa-user"></i>Profile</a></li>
+            <li class = "borrowing book" style = "font-size:11px;"><a href = "accountindex/borrowingbook.php"><i class="fas fa-book-reader"></i>Borrowing</a></li>
         </ul>
     </div>
 </div>
