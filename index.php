@@ -24,9 +24,13 @@
 	<?php if($_SESSION["signinstatus"] == 0){  ?>
 	<?php include "layout/header.php" ?>
 	<?php }
-	else if($_SESSION["typeaccount"] != "") { ?>
-		<?php include "layout/header_login.php" ?>
-
+	else if($_SESSION["typeaccount"] == "user") { ?>
+		<?php include "accountindex/header_account.php" ?>
+	<?php 
+	} 
+	else if($_SESSION["typeaccount"] == "nhanvien"){
+		?>
+		<?php include "nhanvienindex/header_nhanvien.php" ?>
 <?php
 	}
 ?>
@@ -43,7 +47,6 @@
 		<?php include "nhanvienindex/searchtransaction.php" ?>
 	<?php } ?>
     <?php include "disconn_andconn/disconnectdb.php" ?>
-	
 </body>
 
 <script src="js/app.js"></script>

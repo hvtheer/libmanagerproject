@@ -1,11 +1,6 @@
 <?php include "../disconn_andconn/dbconnect.php" ?>
 <?php include "../test.php" ?>
 <?php include "../status.php" ?>
-<script>
-	var a = new audio();
-	a.src = "../audio/tinylove.mp3";
-	a.play();
-</script>
 <html>
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -34,25 +29,40 @@
 	<div class="imageintro">
 		<img src = "../images/Introlib.jpeg">
 	</div>
-    <?php include "searchrtbookname.php" ?>
+<?php
+    $searchdate = $searchdateErr = "";
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+	if(empty($_GET["searchdate"])){
+		$searchrtbookErr = "search is required";
+	}
+	else
+  $searchdate = test_input($_GET["searchdate"]);
+}
+?>
+<div class = "searchbar">
+		<form method="GET" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" target = "_self" >
+			<input type = "date" value = "<?php echo date("Y-m-d");?>" name="searchdate" > 
+			<button type="submit"><i class="fa fa-search"></i></button>
+		</form>
+</div>
 	<div class="tableofbook" style="overflow-x: auto;">
 		
 		<table>
 			  <tr>
+                <th>Name</th>
 				<th>User</th>
-				<th>Bookborrow</th>
-				<th>ReturnDate</th>
-                <th>Fines</th>
-                <th>Confirmer</th>
+				<th>ReceiveNhanVien</th>
+				<th>Money</th>
+                <th>Finesdate</th>
 			  </tr>
 <?php 
 
 // Perform query
-if($searchrtbook == ""){
-	$query = 'SELECT * FROM findallreturned()';
+if($searchdate == ""){
+	$query = 'SELECT * FROM findallfined()';
 }
 else{
-    $query = 'SELECT * FROM findallreturned() WHERE POSITION(\''.$searchrtbook.'\' in book_name) > 0';
+    $query = 'SELECT * FROM findallfined() WHERE finesdate = \''.$searchdate.'\';';
 }
 	$result = pg_query($Conn,$query);
 	if (!$result) {
@@ -62,20 +72,11 @@ else{
 while ($row = pg_fetch_assoc($result)) {
 ?>
  	<tr>
-
- 		<td><?php  echo $row["name"]; ?></td>
- 		<td><?php  echo $row["book_name"]; ?></td>
- 		<td><?php  echo $row["returndate"]; ?></td>
-        <td><?php  echo $row["fines"];?></td>
-        <td><?php echo $row["username"]; ?></td>
-<?php if($row["status"] == "f"){ ?>
-        <td>   
-            <form action="confirmfines.php" method = "POST">
-                <input type = "hidden" name = "transaction_id" value = "<?php echo $row["transaction_id"]?>" >
-                <button>Confirm</button>
-            </form>
-        </td>
-<?php } ?>
+        <td><?php  echo $row["name"]; ?></td>
+ 		<td><?php  echo $row["username"]; ?></td>
+ 		<td><?php  echo $row["nhanvienusername"]; ?></td>
+ 		<td><?php  echo $row["money"]; ?></td>
+        <td><?php  echo $row["finesdate"];?></td>
  	</tr>
 <?php
 }

@@ -23,9 +23,9 @@
         <p><?php echo "Hello ". $_SESSION["typeaccount"] ." ". $_SESSION["accountname"]; ?></p>
         <div class ="optionaluser">
             <ul>
-                <li class = "logout"><a href = "../logout.php">logout </a></li>
-                <li class = "profile"><a href = "../profile/profile.php">Profile</a></li>
-                <li class = "home"><a href = "../index.php">Home</a></li>
+                <li class = "logout" style = "font-size:13px;"><a href = "../logout.php"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
+                <li class = "profile" style = "font-size:13px;"><a href = "profileuser.php"><i class="fas fa-user"></i>Profile</a></li>
+                <li class = "home" style = "font-size:13px;"><a href = "../index.php"><i class="fa fa-home"></i>Home</a></li>
             </ul>
         </div>
     </div>
@@ -46,7 +46,7 @@
 <?php 
 
 // Perform query
-	$query = 'SELECT * FROM find_transactionbyId('.$_SESSION["account_id"].')';
+	$query = 'SELECT * FROM find_transactionbyId('.$_SESSION["account_id"].') ORDER BY borrowdate ASC';
 	$result = pg_query($Conn,$query);
 	if (!$result) {
     	echo "An error occurred.\n";

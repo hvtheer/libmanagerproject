@@ -1,6 +1,6 @@
 <?php
-if ($_SESSION["signinstatus"] != 1&&$_SERVER["REQUEST_METHOD"] == "POST") {
-  $username = $usernameErr = $password = $passwordErr = $re_password = $re_passwordErr = $email = $emailErr = $numberphone = $numberErr = $address = $addressErr ="";
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  $last_nameErr = $first_nameErr = $newpassword = $newpasswordErr = $passwordErr = $re_newpassword = $re_newpasswordErr = $email = $emailErr = $numberphone = $numberErr = $address = $addressErr ="";
   
     if (empty($_POST["last_name"])) {
       $last_nameErr = "Last Name is required";
@@ -17,49 +17,64 @@ if ($_SESSION["signinstatus"] != 1&&$_SERVER["REQUEST_METHOD"] == "POST") {
         $first_name = test_input($_POST["first_name"]);
         // check if name only contains letters and whitespace
       }
-    if (empty($_POST["username"])) {
-        $usernameErr = "Username is required";
-    }
-    else {
-        $username = test_input($_POST["username"]);
-        $query = 'SELECT * FROM getinfo_allacuser() WHERE username = \''.$username.'\'';
-	      $result = pg_query($Conn,$query);
-        if(pg_num_rows($result) != 0){
-          $usernameErr = "username already exists.";
-        }
-    }
-    if (empty($_POST["password"])) {
+      if (empty($_POST["password"])) {
         $passwordErr = "Password is required";
     }  
     else{
-      $password = test_input($_POST["password"]); 
+      $password = test_input($_POST["password"]);
+      if($password != $_SESSION["accountpassword"]){
+          $passwordErr = "Password wrong";
+      }
     }
-    if (empty($_POST["re_password"])) {
-      $re_passwordErr = "re_Password is required";
+    if (empty($_POST["newpassword"])) {
+        $newpasswordErr = "New password is required";
     }  
     else{
-      $re_password = test_input($_POST["re_password"]);
-      if($password != $re_password){
-        $re_passwordErr = "Password not equal repassword";
+      $newpassword = test_input($_POST["newpassword"]); 
+    }
+    if (empty($_POST["re_newpassword"])) {
+      $re_passwordErr = "Renew password is required";
+    } 
+    else{
+      $re_newpassword = test_input($_POST["re_newpassword"]);
+      if($newpassword != $re_newpassword){
+        $re_newpasswordErr = "Password not equal repassword";
       }    
     }
-       if (empty($_POST["numberphone"])) {
+       if (empty($_POST["phone"])) {
         $numberErr = "numberphone is required";
       }
       else {
-        $numberphone = test_input($_POST["numberphone"]);
+        $numberphone = test_input($_POST["phone"]);
         // check if numberphone only number
         if (!preg_match("/^[0-9]*$/",$numberphone)) {
-          $numberphoneErr = "Only Number allowed";
+          $numberErr = "Only Number allowed";
         }
         else{
-          $query = 'SELECT * FROM getinfo_allacuser() WHERE phone = \''.$numberphone.'\'';
+          if($_SESSION["typeaccount"] == "user") {
+            $query = 'SELECT * FROM getinfo_allacuser() WHERE phone = \''.$numberphone.'\'';          
+          }
+          else if($_SESSION["typeaccount"] == "nhanvien"){
+            $query = 'SELECT * FROM getinfo_allnhanvien() WHERE phone = \''.$numberphone.'\'';
+          }
           $result = pg_query($Conn,$query);
           if(pg_num_rows($result) != 0){
             $numberErr = "numberphone already exists.";
           }
         }
       }
+      if($_SESSION["typeaccount"] == "user") {
+        $query = 'SELECT phone FROM user_info WHERE userinfo_id = '.$_SESSION["account_id"];      
+      }
+      else if($_SESSION["typeaccount"] == "nhanvien"){
+        $query = 'SELECT phone FROM user_info WHERE userinfo_id = '.$_SESSION["account_id"];      
+      }
+      $result = pg_query($Conn,$query);
+          if($row = pg_fetch_assoc($result)){
+            if ($row["phone"] == $numberphone){
+              $numberErr = "";
+            }
+          }
       if (empty($_POST["address"])) {
         $addressErr = "Address is required";
       } else {
@@ -77,62 +92,81 @@ if ($_SESSION["signinstatus"] != 1&&$_SERVER["REQUEST_METHOD"] == "POST") {
         $emailErr = "Invalid email format";
       }
       else {
-        $query = 'SELECT * FROM getinfo_allacuser() WHERE email = \''.$email.'\'';
+        if($_SESSION["typeaccount"] == "user") {
+          $query = 'SELECT * FROM getinfo_allacuser() WHERE email = \''.$email.'\'';
+        }
+        else if($_SESSION["typeaccount"] == "nhanvien"){
+          $query = 'SELECT * FROM getinfo_allnhanvien() WHERE email = \''.$email.'\'';        
+        }
           $result = pg_query($Conn,$query);
           if(pg_num_rows($result) != 0){
             $emailErr = "email already exists.";
           }
       }
     }
-    if($last_nameErr == "" && $first_nameErr == "" && $usernameErr == "" && $emailErr == "" && $addressErr == "" && $passwordErr == ""&& $usernameErr == "" && $re_passwordErr == ""&& $numberErr == ""){
-      if (isset($_POST['submit'])) {
-        $username = $_POST['username'];
-        $password = $_POST['password'];
-        $email = $_POST['email'];
-        $address = $_POST['address'];
-        $phone = $_POST['phone'];
-    
-        $query = "UPDATE user_info SET username = '$username', 
-        password = '$password', email = '$email', 
-        address = '$address', phone = '$phone'
-        WHERE userinfo_id = ".$_SESSION["account_id"]."";
+    if($_SESSION["typeaccount"] == "user") {
+      $query = 'SELECT email FROM user_info WHERE userinfo_id = '.$_SESSION["account_id"];    
+    }
+    else if($_SESSION["typeaccount"] == "nhanvien"){
+      $query = 'SELECT email FROM nhanvien WHERE nhanvien_id = '.$_SESSION["account_id"];        
+    }
+      $result = pg_query($Conn,$query);
+          if($row = pg_fetch_assoc($result)){
+            if ($row["email"] == $email){
+              $emailErr = "";
+            }
+          }
+    if($last_nameErr == "" && $first_nameErr == "" && $emailErr == "" && $addressErr == ""&&  $passwordErr == "" && $newpasswordErr == ""&&  $re_newpasswordErr == ""&& $numberErr == ""){
+        
+        if($_SESSION["typeaccount"] == "user") {
+          $query = 'UPDATE user_info SET first_name = \''.$first_name.'\',last_name = \''.$last_name.'\',
+          password = \''.$newpassword.'\', email = \''.$email.'\', 
+          address = \''.$address.'\', phone = \''.$numberphone.'\'
+          WHERE userinfo_id = '.$_SESSION["account_id"].'';
+        }
+        else if($_SESSION["typeaccount"] == "nhanvien"){
+          $query = 'UPDATE nhanvien SET first_name = \''.$first_name.'\',last_name = \''.$last_name.'\',
+          password = \''.$newpassword.'\', email = \''.$email.'\', 
+          address = \''.$address.'\', phone = \''.$numberphone.'\'
+          WHERE nhanvien_id = '.$_SESSION["account_id"].'';        
+        }
         $result = pg_query($Conn,$query);
          if (!$result) {
           echo "An error occurred.\n";
           exit;
-      }
-    }
-?>
+        ?>
+          <script>
+          alert('Change Profile faile!');
+        </script>
+<?php } else { $_SESSION["accountpassword"] = $newpassword; ?>
                 <script>
-                  alert('Created User Success!');
+                  alert('Change Profile Success!');
                 </script>
+<?php } ?>
+    
+
+<?php }else{ ?>
+            <script>
+            alert('you have some warning in your information');
+          </script>
 <?php
-      }
-    else {
+  }
+    
 ?>
-                <script>
-                  alert('Created User faile!');
-                </script>
+        
 <?php
-          }
-}
-    else {
-      ?>
-              <script>
-                  alert('you have some warning in your information');
-                </script>
-<?php
-    }
+} 
 ?>
+
 <?php 
 
 // Perform query
 	        if($_SESSION["typeaccount"] == "user") {
-            $query = 'SELECT * FROM getinfo_acuser(\''.$_SESSION["accountname"].'\')';
+            $query = 'SELECT * FROM user_info WHERE userinfo_id = '.$_SESSION["account_id"];
           }
-            else if($_SESSION["typeaccount"] == "nhanvien"){
-            $query = 'SELECT * FROM getinfo_nhanvien(\''.$_SESSION["accountname"].'\')';
-            }
+          else if($_SESSION["typeaccount"] == "nhanvien"){
+            $query = 'SELECT * FROM nhanvien WHERE nhanvien_id = '.$_SESSION["account_id"];
+          }
 	$result = pg_query($Conn,$query);
 	if (!$result) {
     	echo "An error occurred.\n";
@@ -147,8 +181,9 @@ while ($row = pg_fetch_assoc($result)) {
                   <div class="d-flex flex-column align-items-center text-center">
                     <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin" class="rounded-circle" width="150">
                     <div class="mt-3">
-                      <h4><?php echo "Hello ". $row["name"]."!"; ?></h4>
-                      <p class="text-secondary mb-1"><?php echo $_SESSION["typeaccount"].": ".$_SESSION["account_id"]; ?></p>
+                      <h4><?php echo "Hello ". $row["first_name"]." ".$row["last_name"]."!"; ?></h4>
+                      <p class="text-secondary mb-1"><?php echo "Type account: ".$_SESSION["typeaccount"];?></p>
+                      <p class="text-secondary mb-1"><?php echo "Number ID: ".$_SESSION["account_id"];?></p>
                       <p class="text-muted font-size-sm"><?php echo $row["address"]; ?></p>
                     </div>
                   </div>
@@ -161,40 +196,49 @@ while ($row = pg_fetch_assoc($result)) {
                 <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method= "POST" target="_self">
                   <div class="row">
                     <div class="col-sm-3">
-                      <h6 class="mb-0">Full name</h6>
+                      <h6 class="mb-0">First name</h6>
                     </div>
                     <div class="col-sm-9 text-secondary">
-                    <input name="first_name" class="form-control" value="<?php echo $row["name"]; ?>">
+                    <input name="first_name" class="form-control" value="<?php echo $row["first_name"]; ?>">
                     </div>
                   </div>
                   <hr>
                   <div class="row">
                     <div class="col-sm-3">
-                    <h6 class="mb-0">Username</h6>
+                      <h6 class="mb-0">Last name</h6>
                     </div>
                     <div class="col-sm-9 text-secondary">
-                    <input type="text" name = "username" class="form-control" value="<?php echo $_SESSION["accountname"]; ?>">
-                    <span class="error">* <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $_SESSION["signinstatus"] != 1) echo $usernameErr;?></span>
+                    <input name="last_name" class="form-control" value="<?php echo $row["last_name"]; ?>">
                     </div>
                   </div>
                   <hr>
                   <div class="row">
                     <div class="col-sm-3">
-                    <h6 class="mb-0">Password</h6>
+                    <h6 class="mb-0">Old Password</h6>
                     </div>
                     <div class="col-sm-9 text-secondary">
-                    <input type="text" name = "password" class="form-control" value="<?php echo $row["password"]; ?>">
-                    <span class="error">* <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $_SESSION["signinstatus"] != 1) echo $passwordErr;?></span>
+                    <input type="password" name = "password" class="form-control">
+                    <span class="error"><?php if ($_SERVER["REQUEST_METHOD"] == "POST") echo $passwordErr;?></span>
                     </div>
                   </div>
                   <hr>
                   <div class="row">
                     <div class="col-sm-3">
-                    <h6 class="mb-0">Re-password</h6>
+                    <h6 class="mb-0">New password</h6>
                     </div>
                     <div class="col-sm-9 text-secondary">
-                    <input type="text" name = "password" class="form-control" value="<?php echo $row["password"]; ?>">
-                    <span class="error">* <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $_SESSION["signinstatus"] != 1) echo $re_passwordErr;?></span>
+                    <input type="password" name = "newpassword" class="form-control" >
+                    <span class="error"><?php if ($_SERVER["REQUEST_METHOD"] == "POST" ) echo $newpasswordErr;?></span>
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col-sm-3">
+                    <h6 class="mb-0">Renew password</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                    <input type="password" name = "re_newpassword" class="form-control" >
+                    <span class="error"><?php if ($_SERVER["REQUEST_METHOD"] == "POST" ) echo $re_newpasswordErr;?></span>
                     </div>
                   </div>
                   <hr>
@@ -204,7 +248,7 @@ while ($row = pg_fetch_assoc($result)) {
                     </div>
                     <div class="col-sm-9 text-secondary">
                     <input type="text" name = "email" class="form-control" value="<?php echo $row["email"]; ?>">
-                    <span class="error">* <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $_SESSION["signinstatus"] != 1) echo $emailErr;?></span>
+                    <span class="error"><?php if ($_SERVER["REQUEST_METHOD"] == "POST" ) echo $emailErr;?></span>
                     </div>
                   </div>
                   <hr>
@@ -214,7 +258,7 @@ while ($row = pg_fetch_assoc($result)) {
                     </div>
                     <div class="col-sm-9 text-secondary">
                     <input type="text" name = "address" class="form-control" value="<?php echo $row["address"]; ?>">
-                    <span class="error">* <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $_SESSION["signinstatus"] != 1) echo $addressErr;?></span>
+                    <span class="error"><?php if ($_SERVER["REQUEST_METHOD"] == "POST") echo $addressErr;?></span>
                     </div>
                   </div>
                   <hr>
@@ -224,13 +268,13 @@ while ($row = pg_fetch_assoc($result)) {
                     </div>
                     <div class="col-sm-9 text-secondary">
                     <input type="text" name = "phone" class="form-control" value="<?php echo $row["phone"]; ?>">
-                    <span class="error">* <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $_SESSION["signinstatus"] != 1) echo $numberErr;?></span>
+                    <span class="error"><?php if ($_SERVER["REQUEST_METHOD"] == "POST") echo $numberErr;?></span>
                     </div>
                   </div>
                   <hr>
                   <div class="row">
                     <div class="col-sm-12">
-                    <input type="submit" name="submit" value="Save Changes" class="btn btn-info"><a href="../profile/profile.php"><a></input>
+                    <input type="submit" name="submit" value="Save Changes" class="btn btn-info"></input>
                     </div>
                   </div>
                 </form>
@@ -238,7 +282,4 @@ while ($row = pg_fetch_assoc($result)) {
               </div>
             </div>
           </div>
-
-          <?php
-        }
-        ?>
+<?php } ?>

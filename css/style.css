@@ -210,10 +210,22 @@ i{
     border-collapse: separate;
     width: 100%;
   }
-  
+.tableofbook button {
+    background-color: #BFAEE3;
+    cursor: pointer;
+    width: 60px;
+    height: 20px;
+    border-radius: 5px;
+    transition: 0.6s;
+    align-self: center;
+    color: #f2f2f2;
+}
 .tableofbook th,.tableofbook td {
     text-align: left;
     padding: 8px;
+}
+.tableofbook button:hover{
+    transform: scale(1.2);
 }
 .tableofbook tr:nth-child(even) {background-color: #f2f2f2;}
 .imageintro img{

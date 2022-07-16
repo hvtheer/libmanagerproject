@@ -12,9 +12,12 @@
     	echo "An error occurred.\n";
     	exit;
 	}
+  ?>
+  <div style = "margin-top: 50px;">
+<?php
 while ($row = pg_fetch_assoc($result)) {
 ?> 
-          <div class="row gutters-sm">
+          <div class="row gutters-sm" >
             <div class="col-md-4 mb-3">
               <div class="card">
                 <div class="card-body">
@@ -22,7 +25,8 @@ while ($row = pg_fetch_assoc($result)) {
                     <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin" class="rounded-circle" width="150">
                     <div class="mt-3">
                       <h4><?php echo "Hello ". $row["name"]."!"; ?></h4>
-                      <p class="text-secondary mb-1"><?php echo $_SESSION["typeaccount"].": ".$_SESSION["account_id"]; ?></p>
+                      <p class="text-secondary mb-1"><?php echo "Type account: ".$_SESSION["typeaccount"];?></p>
+                      <p class="text-secondary mb-1"><?php echo "Number ID: ".$_SESSION["account_id"];?></p>
                       <p class="text-muted font-size-sm"><?php echo $row["address"]; ?></p>
                     </div>
                   </div>
@@ -47,15 +51,6 @@ while ($row = pg_fetch_assoc($result)) {
                     </div>
                     <div class="col-sm-9 text-secondary">
                     <?php echo $_SESSION["accountname"]; ?>
-                    </div>
-                  </div>
-                  <hr>
-                  <div class="row">
-                    <div class="col-sm-3">
-                      <h6 class="mb-0">Password</h6>
-                    </div>
-                    <div class="col-sm-9 text-secondary">
-                    <?php echo $_SESSION["accountpassword"]; ?>
                     </div>
                   </div>
                   <hr>
@@ -98,3 +93,4 @@ while ($row = pg_fetch_assoc($result)) {
 <?php
 }
 ?>
+</div>

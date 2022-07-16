@@ -94,7 +94,7 @@ if ($_SESSION["signinstatus"] != 1&&$_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION["accountname"] = $username;
         $_SESSION["typeaccount"] = "user";
         $_SESSION["accountpassword"] = $password;
-        $_SESSION["account_id"]= $row["userinfo_id"];
+        $_SESSION["account_id"]= $row["userinfo_id"]
 ?>
                 <script>
                   alert('Created User Success!');

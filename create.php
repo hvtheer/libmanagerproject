@@ -2,6 +2,7 @@
 <html>
 <?php include "disconn_andconn/dbconnect.php" ?>
 <?php
+    $cter1 = 0;
     if($_SESSION["account_id"]&&$_SESSION["borrowbook_id"]){
         $query = 'SELECT count(transaction_id) FROM (SELECT user_info.userinfo_id,transaction_id,transaction.status FROM user_info LEFT JOIN transaction ON user_info.userinfo_id = transaction.userinfo_id) AS foo WHERE foo.status = false GROUP BY userinfo_id HAVING userinfo_id = '.$_SESSION["account_id"];
         $result = pg_query($Conn,$query);

@@ -56,11 +56,22 @@ CREATE TABLE IF NOT EXISTS returnbooks(
     nhanvien_id INTEGER NOT NULL,
     returndate DATE NOT NULL DEFAULT CURRENT_DATE,
     fines INTEGER NOT NULL DEFAULT 0,
+    status BOOLEAN NOT NULL DEFAULT TRUE,
     PRIMARY KEY(transaction_id),
     FOREIGN KEY(transaction_id) REFERENCES transaction(transaction_id),
     FOREIGN KEY(nhanvien_id) REFERENCES nhanvien(nhanvien_id)
 );
-\encoding "utf-8";
+CREATE TABLE IF NOT EXISTS fines(
+    fines_id SERIAL NOT NULL,
+    userinfo_id INTEGER NOT NULL,
+    nhanvien_id INTEGER NOT NULL,
+    money INTEGER NOT NULL,
+    finesdate DATE DEFAULT CURRENT_DATE,
+    PRIMARY KEY(fines_id),
+    FOREIGN KEY(userinfo_id) REFERENCES user_info(userinfo_id),
+    FOREIGN KEY(nhanvien_id) REFERENCES nhanvien(nhanvien_id)
+);
+
 INSERT INTO user_info(first_name,last_name,username,password,email,address,phone) values('Thanh','Duong','katanashi03','okebae123','katanashi03@gmail.com','78 197 Hoàng Mai','0329980119');
 
 INSERT INTO user_info(first_name,last_name,username,password,email,address,phone) values('Văn','Thể','hthe1010','vanthe','hthe1010@gmail.com','Hai Bà Trưng, Hà Nội','0388019282');
@@ -113,7 +124,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-CREATE OR REPLACE FUNCTION getinfo_acuser(in usernameinput varchar(255)) RETURNS TABLE(userinfo_id INTEGER, name text, email varchar(255),password varchar(255),address varchar(255),phone varchar(255))
+CREATE OR REPLACE FUNCTION getinfo_acuser(in usernameinput varchar(255)) RETURNS TABLE(userinfo_id INTEGER, name text,email varchar(255),password varchar(255),address varchar(255),phone varchar(255))
 AS $$
 BEGIN
 RETURN QUERY SELECT user_info.userinfo_id, user_info.first_name || ' '|| user_info.last_name as name, user_info.email,user_info.password, user_info.address, user_info.phone 
@@ -132,7 +143,7 @@ WHERE status = TRUE ;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION getinfo_nhanvien(in usernameinput varchar(255)) RETURNS TABLE(nhanvien_id INTEGER, name text, email varchar(255),password varchar(255),address varchar(255),phone varchar(255))
+CREATE OR REPLACE FUNCTION getinfo_nhanvien(in usernameinput varchar(255)) RETURNS TABLE(nhanvien_id INTEGER, name text,email varchar(255),password varchar(255),address varchar(255),phone varchar(255))
 AS $$
 BEGIN
 RETURN QUERY SELECT nhanvien.nhanvien_id, nhanvien.first_name || ' '|| nhanvien.last_name as name, nhanvien.email, nhanvien.password, nhanvien.address, nhanvien.phone 
@@ -195,12 +206,30 @@ WHERE user_info.status = TRUE AND transaction.status = FALSE ;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION findallreturned() RETURNS TABLE(transaction_id INTEGER,name text,book_name varchar(255),returndate date,username varchar(255))
+CREATE OR REPLACE FUNCTION findall_actransaction() RETURNS TABLE(transaction_id INTEGER,name text,book_name varchar(255),borrowdate date,duedate date)
 AS $$
 BEGIN
-RETURN QUERY SELECT transaction.transaction_id, user_info.first_name || ' ' || user_info.last_name as name, book.book_name, returnbooks.returndate, nhanvien.username
+RETURN QUERY SELECT transaction.transaction_id, user_info.first_name || ' ' || user_info.last_name as name, book.book_name, transaction_info.borrowDate, transaction_info.dueDate 
+FROM ((transaction inner join transaction_info on transaction_info.transaction_id = transaction.transaction_id) inner join user_info on transaction.userinfo_id = user_info.userinfo_id) inner join book on book.book_id = transaction.book_id 
+WHERE user_info.status = TRUE AND transaction.status = FALSE ;
+END;
+$$ LANGUAGE plpgsql;
+CREATE OR REPLACE FUNCTION findallreturned() RETURNS TABLE(transaction_id INTEGER, userinfo_id INTEGER, name text,book_name varchar(255),returndate date,fines INTEGER,username varchar(255),status BOOLEAN)
+AS $$
+BEGIN
+RETURN QUERY SELECT transaction.transaction_id,user_info.userinfo_id, user_info.first_name || ' ' || user_info.last_name as name, book.book_name, returnbooks.returndate, returnbooks.fines, nhanvien.username, returnbooks.status
 FROM (((transaction inner join returnbooks on returnbooks.transaction_id = transaction.transaction_id) inner join user_info on transaction.userinfo_id = user_info.userinfo_id) inner join book on book.book_id = transaction.book_id ) inner join nhanvien on nhanvien.nhanvien_id = returnbooks.nhanvien_id
-WHERE user_info.status = TRUE AND transaction.status = TRUE; 
+WHERE transaction.status = TRUE
+ORDER BY returndate DESC ;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION findallfined() RETURNS TABLE(name text, username varchar(255), nhanvienusername varchar(255),money INTEGER, finesdate date)
+AS $$
+BEGIN
+RETURN QUERY select user_info.first_name || ' ' || user_info.last_name as name, user_info.username, nhanvien.username , fines.money,fines.finesdate from (fines inner join user_info on fines.userinfo_id = user_info.userinfo_id )inner join nhanvien on fines.nhanvien_id = nhanvien.nhanvien_id
+ORDER BY finesdate DESC ;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -218,6 +247,8 @@ BEGIN
         END IF;
 END;
 $$ LANGUAGE plpgsql;
+
+
 
 CREATE OR REPLACE TRIGGER add_transactionb BEFORE INSERT ON transaction
 FOR EACH ROW
@@ -246,8 +277,8 @@ BEGIN
         THEN 
         NEW.fines =  (NEW.returndate - (select duedate from transaction_info WHERE NEW.transaction_id = transaction_info.transaction_id ))*3000;
         UPDATE user_info SET status = FALSE WHERE user_info.userinfo_id =  (select userinfo_id from transaction where NEW.transaction_id = transaction.transaction_id );
+        NEW.status = FALSE;
         END IF;
-
         UPDATE transaction SET status = TRUE WHERE transaction.transaction_id = NEW.transaction_id;
         UPDATE book SET available = available + 1 WHERE book.book_id = (select book_id from transaction where NEW.transaction_id = transaction.transaction_id);
         RETURN NEW; 
@@ -259,6 +290,20 @@ CREATE OR REPLACE TRIGGER return_books BEFORE INSERT ON returnbooks
 FOR EACH ROW
 EXECUTE PROCEDURE return_book();
 
+CREATE OR REPLACE FUNCTION check_fines() RETURNS TRIGGER
+AS $$
+BEGIN   
+        IF ((SELECT sum(money) from fines group by userinfo_id having fines.userinfo_id = NEW.userinfo_id) >= (SELECT sum(fines) from returnbooks inner join transaction on returnbooks.transaction_id = transaction.transaction_id GROUP BY transaction.userinfo_id HAVING transaction.userinfo_id = NEW.userinfo_id))
+        THEN 
+            UPDATE user_info SET status = TRUE WHERE user_info.userinfo_id = NEW.userinfo_id;
+        END IF;
+        RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER check_fine AFTER INSERT ON fines
+FOR EACH ROW
+EXECUTE PROCEDURE check_fines();
 
 -- test of insert a transaction
 -- INSERT INTO transaction(userinfo_id,book_id) values (1,1);
@@ -267,4 +312,5 @@ EXECUTE PROCEDURE return_book();
 -- test returnbooks 
 -- INSERT INTO returnbooks(transaction_id,nhanvien_id) values (1,1);
 -- check fines 
--- INSERT INTO returnbooks(transaction_id,nhanvien_id,returndate) values (1,1,'2022-08-06');
+-- INSERT INTO returnbooks(transaction_id,nhanvien_id,returndate) values (39,1,'2022-08-06');
+-- CHECK pay the fines to active account INSERT INTO fines(nhanvien_id,userinfo_id,money) values (1,12,48000);
