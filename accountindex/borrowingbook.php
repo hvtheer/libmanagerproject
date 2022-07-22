@@ -24,7 +24,7 @@
         <div class ="optionaluser">
             <ul>
                 <li class = "logout" style = "font-size:13px;"><a href = "../logout.php"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
-                <li class = "profile" style = "font-size:13px;"><a href = "profileuser.php"><i class="fas fa-user"></i>Profile</a></li>
+                <li class = "profile" style = "font-size:13px;"><a href = "../profile/index.php"><i class="fas fa-user"></i>Profile</a></li>
                 <li class = "home" style = "font-size:13px;"><a href = "../index.php"><i class="fa fa-home"></i>Home</a></li>
             </ul>
         </div>
