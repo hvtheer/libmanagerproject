@@ -1,5 +1,5 @@
 <?php
-$Conn = pg_connect("host=localhost port=5432 dbname=libmaneger user=postgres password=125217");
+$Conn = pg_connect("host=localhost port=5432 dbname=libmanager user=postgres password=admin");
 if (!$Conn) {
     echo "An error occurred.\n";
     exit;
