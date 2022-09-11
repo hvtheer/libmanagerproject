@@ -1,4 +1,4 @@
-create database libmaneger;
+create database libmanager;
 \c libmaneger;
 CREATE TABLE IF NOT EXISTS user_info(
     userinfo_id SERIAL NOT NULL,
